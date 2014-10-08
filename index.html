@@ -1,29 +1,31 @@
 <!doctype html>
 <html>
 <head>
-	<title>FaceMaker for Facer</title>
-  
+  <title>FaceMaker for Facer</title>
+
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
-	<!-- CSS -->
-	<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.2.0/css/bootstrap.min.css">
-	<link rel="stylesheet" href="css/facemaker.css">
+  <!-- CSS -->
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.2.0/css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/facemaker.css">
 </head>
 <body>
-	<nav class="navbar navbar-default" role="navigation">
-		<div class="container">
-			<div class="navbar-header">
-				<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
-					<span class="sr-only">Toggle Navigation</span>
-					<span class="icon-bar"></span>
-					<span class="icon-bar"></span>
-					<span class="icon-bar"></span>
-				</button>
-				<a href="#" class="navbar-brand">FaceMaker for Facer</a>
-			</div>
-			<div class="collapse navbar-collapse" id="navbar">
+  <nav class="navbar navbar-default" role="navigation">
+    <div class="container">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+          <span class="sr-only">Toggle Navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a href="#" class="navbar-brand">FaceMaker for Facer</a>
+      </div>
+      <div class="collapse navbar-collapse" id="navbar">
         <div class="navbar-form navbar-left">
-          <button class="btn btn-default" type="button">Save</button>
+          <button class="btn btn-default" type="button" id="new_face">New Face</button>
+          <button class="btn btn-default" type="button" id="load_face" data-toggle="modal" data-target="#load_modal">Load Face</button>
+          <button class="btn btn-default" type="button" id="download_face">Save</button>
         </div>
         <div class="navbar-form navbar-right">
           <select id="example_faces" class="form-control">
@@ -36,76 +38,154 @@
             <option value="nightmare-before-christmas.face">Nightmare Before Christmas</option>
             <option value="wearnow.face">Wear Now</option>
             <option value="test-face.face">Reverse Engineering Test</option>
-	        </select>
+          </select>
         </div>
-			</div>
-		</div>
-	</nav>
-	<div class="container">
-		<div class="row">
-			<!-- Preview -->
-			<div class="col-lg-5 col-lg-push-7 text-right">
-				<canvas width="400" height="400" id="preview"></canvas>
-			</div>
+      </div>
+    </div>
+  </nav>
+  <div class="container">
+    <div class="row">
+      <!-- Preview -->
+      <div class="col-lg-5 col-lg-push-7 text-right">
+        <canvas width="320" height="320" id="preview"></canvas>
+      </div>
 
-			<!-- Editor -->
-			<div class="col-lg-7 col-lg-pull-5" id="editor">
-				
-			</div>
-		</div>
-		<div class="well well-sm">
-		<div class="row">
-			<div class="col-lg-12">
-				<h2>Help</h2>
-			</div>
-		</div>
-		<div class="row" id="help">
-			<div class="col-lg-4">
-				<h4>Time Related Variables</h4>
-				<dl class="dl-horizontal">
-					
-				</dl>
-			</div>
-			<div class="col-lg-4">
-				<h4>Battery</h4>
-				<dl class="dl-horizontal">
-					
-				</dl>
+      <!-- Editor -->
+      <div class="col-lg-7 col-lg-pull-5" id="editor">
+        
+      </div>
+    </div>
+    <div class="well well-sm">
+      <div class="row">
+        <div class="col-lg-12">
+          <h2>Help</h2>
+        </div>
+      </div>
+      <div class="row" id="help">
+        <div class="col-lg-4">
+          <h4>Time Related Variables</h4>
+          <dl class="dl-horizontal">
 
-				<h4>Wear</h4>
-				<dl class="dl-horizontal">
-					
-				</dl>
-			</div>
-			<div class="col-lg-4">
-				<h4>Weather</h4>
-				<dl class="dl-horizontal">
-					
-				</dl>
-			</div>
-		</div>
-		</div>
-	</div>
+          </dl>
+        </div>
+        <div class="col-lg-4">
+          <h4>Battery</h4>
+          <dl class="dl-horizontal">
 
-	<!-- Javascript -->
-	<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-	<script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.2.0/js/bootstrap.min.js"></script>
-	<script src="//cdnjs.cloudflare.com/ajax/libs/jszip/2.4.0/jszip.min.js"></script>
-	<script src="js/jszip-utils.min.js"></script>
+          </dl>
 
-	<script src="js/formatter.js"></script>
-	<script src="js/facemaker.js"></script>	
-	<script>
-	var fm = new FaceMaker({
-		editor: '#editor',
-		preview: '#preview',
-		examples: example_faces});
+          <h4>Wear</h4>
+          <dl class="dl-horizontal">
+
+          </dl>
+        </div>
+        <div class="col-lg-4">
+          <h4>Weather</h4>
+          <dl class="dl-horizontal">
+
+          </dl>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="load_modal">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button class="close" type="button" data-dismiss="modal">
+            <span aria-hidden="true">&times;</span>
+          </button>
+
+          <h4 class="modal-title">Load a face from a .zip or .face file</h4>
+        </div>
+
+        <div class="modal-body" id="load_drop">
+          <p>Drag and drop a .face or .zip file here to load it</p>
+          <p>Or select a file <input type="file" id="load_file"></p>
+          <p>
+            <span style="display:none;" id="file_loading">Loading...</span>
+          </p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+  <!-- Javascript -->
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.2.0/js/bootstrap.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jszip/2.4.0/jszip.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.0.0/FileSaver.min.js"></script>
+  <script src="js/jszip-utils.min.js"></script>
+
+  <script src="js/facemaker.js"></script>  
+  <script src="js/facemaker.formatter.js"></script>
+  <script src="js/facemaker.editor.js"></script>
+
+  <script>
+    var fm = new FaceMaker({
+      editor: '#editor',
+      preview: '#preview',
+      new_face: "#new_face",
+      download_face: "#download_face"
+    });
 
     $("#example_faces").change(function(e) {
       if(e.target.selectedIndex) {
         fm.load_face_ajax("examples/" + $(this).val());
       }
     }).val("test-face.face").trigger("change");
-	</script>
+
+    function load_file_input(e) { 
+      var file = e.target.files[0],
+          reader = new FileReader();
+
+      e.target.setAttribute("disabled", true);
+
+      $("#file_loading").show();
+
+      reader.onload = function(f) {
+        fm.load_face(f.target.result);
+        e.target.removeAttribute("disabled");
+        $("#load_modal").modal("hide")
+        $("#file_loading").hide();
+      }
+
+      reader.readAsArrayBuffer(file);
+    }
+
+    $("#load_file").change(load_file_input);
+    
+    var $load_drop = $("#load_drop");
+    $load_drop.on("dragover", function(e) {
+      $load_drop.addClass("dropping");
+      e.preventDefault();
+    }).on("dragleave", function(e) {
+      $load_drop.removeClass("dropping");
+      e.preventDefault();
+
+      window.dragleave = e;
+    }).on("drop", function(e) {
+      $load_drop.removeClass("dropping");
+      e.preventDefault();
+
+      var file = e.originalEvent.dataTransfer.files[0],
+          reader = new FileReader();
+
+      $("#file_loading").show();
+
+      reader.onload = function(f) {
+        console.log(f);
+
+        fm.load_face(f.target.result);
+        $("#file_loading").hide();
+        $("#load_modal").modal("hide");
+      }
+
+      reader.readAsArrayBuffer(file);
+
+      window.drop = e;
+    });
+  </script>
 </body>
 </html>

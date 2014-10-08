@@ -10,5 +10,22 @@
   }
 }
 
+#editor img {
+  width: 340px;
+}
+
+#load_modal .modal-body {
+  height: 300px;
+}
+
+#load_modal .modal-body#load_drop {
+  border: 2px dashed lightgray;
+}
+
+#load_modal .modal-body#load_drop.dropping {
+  border: 4px dashed green;
+}
+
+
 
 

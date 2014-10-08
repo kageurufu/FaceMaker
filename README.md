@@ -11,11 +11,11 @@ TODO (Rendering)
 ================
 
 * [ ] Implement all the Tags (Variables)
-* [ ] Go through and write a proper parser for variables instead of parseInt and breakage
+* [X] Go through and write a proper parser for variables instead of parseInt and breakage
 * [ ] Rotation for shapes
 * [ ] Rotation for images
-* [ ] Math for tags
-* [ ] Conditional Support
+* [X] Math for tags
+* [X] Conditional Support
 * [ ] Font support
 
 Thoughts
@@ -26,6 +26,8 @@ I could recursively search for groups of $something$ for conditionals, using
 String.replace(regexp, func(match, p...))
 
 That could work, I need to experiment.
+
+UPDATE: it worked.
 
 Fonts
 =====
