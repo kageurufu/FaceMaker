@@ -1,4 +1,14 @@
 #preview {
 	color: black;
 	background-color: black;
+  width: 100%;
 }
+
+@media(min-width: 768) {
+  #preview {
+    width: 400px;
+  }
+}
+
+
+
