@@ -52,65 +52,187 @@ var FaceMaker = (function() {
 		c.clip();
 
 		//Blank the watch face
-		c.fillStyle = "rgb(5,55,55)";
+		c.fillStyle = "rgb(0,0,0)";
 		c.lineWidth = 0;
 		c.fillRect(0, 0, fm.canvas_width, fm.canvas_height);
 
 		for(var i in fm.face.watchface) {
-			fm.draw_face(c, fm.face.watchface[i]);
+			fm.draw_layer(fm.face.watchface[i]);
 		}
 
-		c.fillStyle = "rgb(0, 0, 0)"
+		c.fillStyle = "rgb(255,255,255)"
 		c.fillRect(0, 330, fm.canvas_width, 100);
 		//Apply the clip, the mask off the rest of it
 		c.restore();
-
+    
 		requestAnimationFrame(fm.render.bind(this));
 	};
 
-	FM.prototype.draw_face = function(c, face) {
+	FM.prototype.draw_layer = function(layer) {
 		var fm = this;
 
-		switch(face.type) {
-			case 'image':
-				var image_hash = face.hash,
-					image = fm.face.images[image_hash].img,
-					x = parseInt(face.x) + 40,
-					y = parseInt(face.y) + 40,
-					w = parseInt(face.width),
-					h = parseInt(face.height);
+    switch(layer.type) {
+      case 'text':
+        fm._draw_text(layer);
+        break;
+      case 'shape':
+        fm._draw_shape(layer);
+        break;
+      case 'image':
+        fm._draw_image(layer);
+        break;
+      default:
+        throw layer.type + " is not a valid layer type";
+    }
+	};  
+  
+  FM.prototype._draw_image = function(layer) {
+		var image_hash = layer.hash,
+				image = fm.face.images[image_hash].img,
 
-				c.drawImage(image, x, y, w, h);
-				break;
-			case 'shape':
-				break;
-			case 'text':
-				var rotation = parseInt(face.r),
-					x = parseInt(face.x) + 40,
-					y = parseInt(face.y) + 40;
+				x = parseInt(layer.x) + 40,
+				y = parseInt(layer.y) + 40,
+				w = parseInt(layer.width),
+	      h = parseInt(layer.height);
+  	fm.ctx.drawImage(image, x, y, w, h);
+  }
 
-				c.save();
-				c.translate(x, y);
-				c.rotate(rotation * (Math.PI / 180));
+  FM.prototype._draw_shape = function(layer) {
+    var fm = this,
+        c = fm.ctx,
+        x = parseInt(layer.x) + 40,
+        y = parseInt(layer.y) + 40,
+        radius = parseInt(layer.radius);
+    /*
+     * Some Notes, per Reverse Engineering
+     * shape_opt 0 - Fill, 1 - Stroke
+     */
+  
+    if(layer.shape_opt) {
+      c.strokeStyle = fm._parseColor(layer.color);
+    } else {
+      c.fillStyle = fm._parseColor(layer.color);
+    }
 
-				c.fillStyle = fm._parseColor(face.bgcolor);
+    c.lineWidth = parseInt(layer.stroke_size) / 2;
 
-				c.font = face.size + "px " + "Arial";
-				c.fillText(fm.format(face.text), 0, 0);
-				c.restore();
+    switch(layer.shape_type) {
+      case fm.ShapeTypes.circle:
+        c.beginPath();
+        c.arc(x, y, radius, 0, 2*Math.PI);
 
-				break;
-			default:
-				throw face.type;
-		}
-	};
+        if(layer.shape_opt === 0) {
+          c.fill();
+        } else {
+          c.stroke();
+        }
+
+        c.closePath();
+
+        break;
+      case fm.ShapeTypes.square:
+      case fm.ShapeTypes.line:
+        //As far as I can tell, a line is just a rect, and a square is really a rect
+        if(layer.shape_opt === 0) {
+          c.fillRect(x, y, parseInt(layer.width), parseInt(layer.height));
+        } else {
+          c.strokeRect(x, y, parseInt(layer.width), parseInt(layer.height));
+        }
+        break;
+
+      case fm.ShapeTypes.triangle:
+        //Fun little hack to skip duplication of code
+        layer.sides = "3";
+      case fm.ShapeTypes.polygon:
+        var num_sides = parseInt(layer.sides),
+            angle = 2 * Math.PI / num_sides;
+        
+        var rotation = 90 * Math.PI / 180;
+
+        c.beginPath();
+        
+        c.moveTo(x + radius * Math.cos(angle + rotation), y + radius * Math.sin(angle + rotation));
+
+        for( var i = 0; i <= num_sides; i++) {
+          c.lineTo(x + radius * Math.cos(i * angle + rotation), y + radius * Math.sin(i * angle + rotation));
+        }
+        
+        c.closePath();
+
+        if(layer.shape_opt) {
+          c.stroke();
+        } else {
+          c.fill();
+        }
+        break;
+      default: break;
+    }
+  }
+  
+  FM.prototype.ShapeTypes = {
+    circle: 0,
+    square: 1,
+    polygon: 2,
+    line: 3,
+    triangle: 4
+  };
+
+  FM.prototype.Alignment = {
+    left: 0,
+    center: 1,
+    right: 2
+  };
+
+  FM.prototype.Transform = {
+    uppercase: 1,
+    lowercase: 2
+  };
+
+  FM.prototype._draw_text = function(layer) {
+    var fm = this,
+        c = fm.ctx,
+        rotation = parseInt(layer.r),
+		  	x = parseInt(layer.x) + 40,
+				y = parseInt(layer.y) + 40,
+        text = fm.format(layer.text);
+  
+    if(layer.transform == fm.Transform.uppercase) {
+      text = text.toUpperCase();
+    } else if (layer.transform == fm.Transform.lowercase) {
+      text = text.toLowerCase();
+    }
+
+		c.save();
+		c.translate(x, y);
+		c.rotate(rotation * (Math.PI / 180));
+
+    c.fillStyle = fm._parseColor(layer.color);
+    
+    switch(layer.alignment) {
+      case fm.Alignment.center:
+        c.textAlign = 'center';
+        break;
+      case fm.Alignment.right:
+        c.textAlign = 'right';
+        break;
+      case fm.Alignment.left:
+      default:
+        c.textAlign = 'left';
+    }
+    
+		c.font = layer.size + "px " + "Arial";
+		c.fillText(text, 0, 0);
+
+    c.restore();
+  };
 
 	FM.prototype._parseColor = function(color_str) {
-		if(color_str === '0') {
-			return '#FFF';
-		}
-		console.log(color_str);
-		return color_str;
+    var color = parseInt(color_str),
+        r = color >> 16 & 0xFF,
+        g = color >>  8 & 0xFF,
+        b = color       & 0xFF;
+
+		return "rgb(" + r + "," + g + "," + b + ")";
 	};
 
 	FM.prototype._parseAlignment = function(alignment) {
@@ -132,6 +254,9 @@ var FaceMaker = (function() {
 
 		fm.canvas_width = fm.preview.width;
 		fm.canvas_height = fm.preview.height;
+    
+    fm.ctx.fillStyle = 'rgb(255,255,255)';
+    fm.ctx.fillRect(0, 0, fm.preview.width, fm.preview.height);
 	};
 
 	FM.prototype.load_face_ajax = function(href) {
@@ -172,20 +297,24 @@ var FaceMaker = (function() {
 			} else if (filename === 'preview.png') {
 				face.preview_image === file.asBinary();
 			} else if (filename.indexOf('images/') === 0) {
-				var image_hash = filename.substring(7),
-					image = {
-						file: file,
-						img: new Image()
-					};
+        if(filename !== 'images/') {
+  				var image_hash = filename.substring(7),
+	  			  	image = {
+		  	  			file: file,
+		    				img: new Image()
+	  		  		};
+  
+  				image.img.src = 'data:image/jpeg;base64,' + btoa(image.file.asBinary());
 
-				image.img.src = 'data:image/jpeg;base64,' + btoa(image.file.asBinary());
-
-				face.images[image_hash] = image;
+  				face.images[image_hash] = image;
+        }
 			} else if (filename.indexOf('fonts/') === 0) {
-				var font_name = filename.substring(6);
-				face.fonts[font_name] = file;
+        if(filename !== 'fonts/') {
+	  			var font_name = filename.substring(6);
+  				face.fonts[font_name] = file;
+        }
 			} else {
-				throw 'File ' + filename + ' is unknown';
+				console.log('File ' + filename + ' is unknown');
 			}
 		}
 

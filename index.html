@@ -20,7 +20,22 @@
 				<a href="#" class="navbar-brand">FaceMaker for Facer</a>
 			</div>
 			<div class="collapse navbar-collapse" id="navbar">
-				
+        <div class="navbar-form navbar-left">
+          <button class="btn btn-default" type="button">Save</button>
+        </div>
+        <div class="navbar-form navbar-right">
+          <select id="example_faces" class="form-control">
+            <option>Example Faces</option>
+            <option value="angleface.face">Angle Face</option>
+            <option value="executive-blue.face">Executive Blue</option>
+            <option value="f-face.face">F-Face</option>
+            <option value="meteoface-fixed.face">Meteoface - Fixed</option>
+            <option value="meteoface-time.face">Meteoface - Time</option>
+            <option value="nightmare-before-christmas.face">Nightmare Before Christmas</option>
+            <option value="wearnow.face">Wear Now</option>
+            <option value="test-face.face">Reverse Engineering Test</option>
+	        </select>
+        </div>
 			</div>
 		</div>
 	</nav>
@@ -28,7 +43,7 @@
 		<div class="row">
 			<!-- Preview -->
 			<div class="col-lg-5 col-lg-push-7 text-right">
-				<canvas width="400px" height="400px" id="preview"></canvas>
+				<canvas width="400" height="400" id="preview"></canvas>
 			</div>
 
 			<!-- Editor -->
@@ -79,22 +94,16 @@
 	<script src="js/formatter.js"></script>
 	<script src="js/facemaker.js"></script>	
 	<script>
-	var example_faces = [
-		'angleface.face',
-		'executive-blue.face',
-		'f-face.face',
-		'meteoface-fixed.face',
-		'meteoface-time.face',
-		'nightmare-before-christmas.face',
-		'wearnow.face'
-	];
-
 	var fm = new FaceMaker({
 		editor: '#editor',
 		preview: '#preview',
 		examples: example_faces});
 
-	fm.load_face_ajax("examples/" + example_faces[6])
+    $("#example_faces").change(function(e) {
+      if(e.target.selectedIndex) {
+        fm.load_face_ajax("examples/" + $(this).val());
+      }
+    }).val("test-face.face").trigger("change");
 	</script>
 </body>
 </html>
