@@ -1,0 +1,100 @@
+<!doctype html>
+<html>
+<head>
+	<title>FaceMaker for Facer</title>
+
+	<!-- CSS -->
+	<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.2.0/css/bootstrap.min.css">
+	<link rel="stylesheet" href="css/facemaker.css">
+</head>
+<body>
+	<nav class="navbar navbar-default" role="navigation">
+		<div class="container">
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+					<span class="sr-only">Toggle Navigation</span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</button>
+				<a href="#" class="navbar-brand">FaceMaker for Facer</a>
+			</div>
+			<div class="collapse navbar-collapse" id="navbar">
+				
+			</div>
+		</div>
+	</nav>
+	<div class="container">
+		<div class="row">
+			<!-- Preview -->
+			<div class="col-lg-5 col-lg-push-7 text-right">
+				<canvas width="400px" height="400px" id="preview"></canvas>
+			</div>
+
+			<!-- Editor -->
+			<div class="col-lg-7 col-lg-pull-5" id="editor">
+				
+			</div>
+		</div>
+		<div class="well well-sm">
+		<div class="row">
+			<div class="col-lg-12">
+				<h2>Help</h2>
+			</div>
+		</div>
+		<div class="row" id="help">
+			<div class="col-lg-4">
+				<h4>Time Related Variables</h4>
+				<dl class="dl-horizontal">
+					
+				</dl>
+			</div>
+			<div class="col-lg-4">
+				<h4>Battery</h4>
+				<dl class="dl-horizontal">
+					
+				</dl>
+
+				<h4>Wear</h4>
+				<dl class="dl-horizontal">
+					
+				</dl>
+			</div>
+			<div class="col-lg-4">
+				<h4>Weather</h4>
+				<dl class="dl-horizontal">
+					
+				</dl>
+			</div>
+		</div>
+		</div>
+	</div>
+
+	<!-- Javascript -->
+	<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.2.0/js/bootstrap.min.js"></script>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/jszip/2.4.0/jszip.min.js"></script>
+	<script src="js/jszip-utils.min.js"></script>
+
+	<script src="js/formatter.js"></script>
+	<script src="js/facemaker.js"></script>	
+	<script>
+	var example_faces = [
+		'angleface.face',
+		'executive-blue.face',
+		'f-face.face',
+		'meteoface-fixed.face',
+		'meteoface-time.face',
+		'nightmare-before-christmas.face',
+		'wearnow.face'
+	];
+
+	var fm = new FaceMaker({
+		editor: '#editor',
+		preview: '#preview',
+		examples: example_faces});
+
+	fm.load_face_ajax("examples/" + example_faces[6])
+	</script>
+</body>
+</html>

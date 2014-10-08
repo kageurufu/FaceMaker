@@ -1,0 +1,91 @@
+Time
+Dy	Year	2014
+Dyy	Year	14
+Dyyyy	Year	2014
+DM	Month in Year	10
+DMM	Month in Year	10
+DMMM	Month in Year	Oct
+DMMMM	Month in Year	October
+DW	Week in Month	2
+Dw 	Week in Year	41
+DD	Day in Year 	280
+Dd 	Day in Month 	7
+DE	Day of Week 	Tue
+DEEEE	Day of Week 	Tuesday
+DF
+Da
+Dh
+Dk
+DH
+DK
+DHZ
+DkZ
+DKZ
+DhZ
+DhoT
+DhoTb
+DWFK
+DWFH
+DhT
+DkT
+Dm
+DmZ
+DmoT
+DWFM
+DmT
+DmMT
+DmST
+Ds
+DsZ
+DseT
+DWFS
+Dz
+Dzzzz
+--Battery
+BLP
+BLN
+BTC
+BTI
+BTCN
+BTIN
+BS
+-Wear
+ZLP
+ZSC
+-Weather
+WLC
+WTH
+WTL
+WCT
+WCCI
+WCCT
+WCHN
+WCHP
+WFAH
+WFAL
+WFACT
+WFACI
+WFBH
+WFBL
+WFBCT
+WFBCI
+WFCH
+WFCL
+WFCCT
+WFCCI
+WFDH
+WFDL
+WFDCT
+WFDCI
+WFEH
+WFEL
+WFECT
+WFECI
+WFFH
+WFFL
+WFFCT
+WFFCI
+WFGH
+WFGL
+WFGCT
+WFGCI
