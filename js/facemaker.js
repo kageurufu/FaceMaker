@@ -14,19 +14,24 @@ var FaceMaker = (function() {
 		this.new_face_button = $(this.options.new_face);
 		this.download_face_button = $(this.options.download_face);
 
-		this.editor = $(this.options.editor);
 		this.preview = $(this.options.preview)[0];
-
-		if(!this.editor || !this.preview) {
-			throw "Unable to initialize elements";
-		}
 
 		this.face = null;
 		this.rendering = false;
 
-		this.init_preview();
-		this.init_editor();
+		if(!this.init_preview()) {
+			throw "Unable to initialize elements";
+		}
+
 		this.init_buttons();
+	};
+
+	FM.prototype.defaults = {
+		editor: '#editor',
+		preview: 'canvas#preview',
+		new_face: "#new_face",
+		download_face: "#download_face",
+		examples: []
 	};
 
 	FM.prototype.init_buttons = function() {
@@ -54,19 +59,13 @@ var FaceMaker = (function() {
 
 		this.rendering = true;
 		this.render();
+		this.init_editor();
 	}
 	
 	FM.prototype.download_face = function() {
 		this.download_zip_file();
 	}
 
-	FM.prototype.defaults = {
-		editor: '#editor',
-		preview: 'canvas#preview',
-		new_face: "#new_face",
-		download_face: "#download_face",
-		examples: []
-	};
 
 	FM.prototype.render = function() {
 		var fm = this,
@@ -94,7 +93,9 @@ var FaceMaker = (function() {
         c.fillRect(0, 0, fm.canvas_width, fm.canvas_height);
 
         for(var i in fm.face.watchface) {
-        	fm.draw_layer(fm.face.watchface[i]);
+        	if(fm.face.watchface.hasOwnProperty(i)) {
+        		fm.draw_layer(fm.face.watchface[i]);
+        	}
         }
 
         //Apply the clip, the mask off the rest of it
@@ -120,7 +121,8 @@ var FaceMaker = (function() {
       		fm._draw_image(layer);
       		break;
       		default:
-      		throw layer.type + " is not a valid layer type";
+      			break;
+      			console.log( layer.type + " is not a valid layer type" );
       	}
       };  
 
@@ -286,6 +288,8 @@ var FaceMaker = (function() {
     		case fm.Alignment.right:
     		return 'right';
     		case fm.Alignment.left:
+    		return 'left';
+
     		default:
     		return 'left';
     	}
@@ -306,6 +310,8 @@ var FaceMaker = (function() {
 
     	fm.ctx.fillStyle = 'rgb(255,255,255)';
     	fm.ctx.fillRect(0, 0, fm.preview.width, fm.preview.height);
+
+    	return true;
     };
 
     FM.prototype.load_face_ajax = function(href) {
@@ -325,6 +331,7 @@ var FaceMaker = (function() {
 
    		fm.rendering = true;
    		requestAnimationFrame(fm.render.bind(fm));
+   		fm.init_editor();
     }
 
     FM.prototype._handle_zip = function(zip_file) {

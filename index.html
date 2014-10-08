@@ -51,9 +51,9 @@
       </div>
 
       <!-- Editor -->
-      <div class="col-lg-7 col-lg-pull-5" id="editor">
-        
+      <div class="col-lg-7 col-lg-pull-5 form-horizontal" id="editor">
       </div>
+  
     </div>
     <div class="well well-sm">
       <div class="row">
@@ -112,6 +112,202 @@
     </div>
   </div>
   <!-- Javascript -->
+  <script type="text/ractive" id="editor-template">
+  {{#face}}
+
+    {{#description}}
+    <div class="row">
+      <div class="col-lg-12">
+        <label class="control-label col-lg-2">Title</label>
+        <div class="col-lg-6">
+          <input type="text" class="form-control" value="{{title}}">
+        </div>
+      </div>
+    </div>
+    {{/description}}
+
+    <div class="panel-group" id="editor-layers">
+      {{#watchface:index}}
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <a href="#editor-layer-{{index}}" data-toggle="collapse" data-parent="#editor-layers">
+            <h4 class="panel-title">Layer {{id}} - {{type}}</h4>
+          </a>
+        </div>
+
+        <div class="panel-collapse collapse" id="editor-layer-{{index}}" >
+          {{>Editor}}
+        </div>
+      </div>
+      {{/watchface}}
+    </div>
+
+    {{#images}}
+      {{#each images:hash}}
+        {{hash}}
+        <img src="{{img.src}}">
+      {{/each}}
+    {{/images}}
+  {{/face}}
+  <!-- {{>Editor}} -->
+  {{#if type == 'shape'}}
+    {{>shapeEditor}}
+  {{/if}}
+  {{#if type == 'text'}}
+    {{>textEditor}}
+  {{/if}}
+  {{#if type == 'image'}}
+    {{>imageEditor}}
+  {{/if}}
+  <!-- {{/Editor}} -->
+
+  <!-- {{>textEditor}} -->
+  <div class="row">
+    <div class="col-lg-6">
+      <div class="form-group">
+        <label class="control-label col-lg-3">Text</label>
+        <div class="col-lg-9">
+          <input class="form-control" value="{{text}}">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="control-label col-lg-3">X Pos</label>
+        <div class="col-lg-9">
+          <input class="form-control" value="{{x}}">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="control-label col-lg-3">Y Pos</label>
+        <div class="col-lg-9">
+          <input class="form-control" value="{{y}}">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="control-label col-lg-3">Opacity</label>
+        <div class="col-lg-9">
+          <input class="form-control" value="{{opacity}}">
+        </div>
+      </div>
+      
+      <!-- Colors dont work yet, need to fix this -->
+
+      <div class="form-group">
+        <label class="control-label col-lg-4">Color</label>
+        <div class="col-lg-8">
+          <input class="form-control" value="{{color}}">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="control-label col-lg-4">Dim Color</label>
+        <div class="col-lg-8">
+          <input class="form-control" value="{{low_power_color}}">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="control-label col-lg-4">BG Color</label>
+        <div class="col-lg-8">
+          <input class="form-control" value="{{bgcolor}}">
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-6">
+      <div class="form-group">
+        <label class="control-label col-lg-3">Alignment</label>
+        <div class="col-lg-9">
+          <select class="form-control" type="number" value='{{alignment}}'>
+            <option value="0">Left</option>
+            <option value="1">Center</option>
+            <option value="2">Right</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="control-label col-lg-3">Transform</label>
+        <div class="col-lg-9">
+          <select class="form-control" type="number" value='{{transform}}'>
+            <option value='0'>None</option>
+            <option value='1'>Uppercase</option>
+            <option value='2'>Lowercase</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="control-label col-lg-3">Size</label>
+        <div class="col-lg-9">
+          <input class="form-control" value="{{size}}">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <div class="col-lg-9 col-lg-push-3 checkbox">
+          <label class="control-label">
+            <input type="checkbox" checked="{{italic}}">
+            Italics
+          </label>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <div class="col-lg-9 col-lg-push-3 checkbox">
+          <label class="control-label">
+            <input type="checkbox" checked="{{bold}}">
+            Bold
+          </label>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <div class="col-lg-9 col-lg-push-3 checkbox">
+          <label class="control-label">
+            <input type="checkbox" checked="{{low_power}}">
+            Display when Dimmed
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- {{/textEditor}} -->
+
+  <!-- {{>shapeEditor}} -->
+
+  <!-- {{/shapeEditor}} -->
+
+  <!-- {{>imageEditor}} -->
+
+  <!-- {{/imageEditor}} -->
+
+      <!-- Select Input
+      <div class="row">
+        <label class="control-label col-lg-3"></label>
+        <div class="col-lg-9">
+          <select class="form-control" type="number" value='{{}}'>
+          </select>
+        </div>
+      </div>
+      -->
+
+      <!-- Text Input
+      <div class="row">
+        <label class="control-label col-lg-3"></label>
+        <div class="col-lg-9">
+          <input class="form-control" value="{{}}">
+        </div>
+      </div>
+      -->
+      <!-- Checkbox
+      <div class="row">
+        <div class="col-lg-9 col-lg-push-3 checkbox">
+          <label class="control-label">
+            <input type="checkbox" checked="{{}}">
+          </label>
+        </div>
+      </div>
+      -->
+  </script>
+
+  <script src='//cdn.ractivejs.org/latest/ractive.js'></script>
   <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
   <script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.2.0/js/bootstrap.min.js"></script>
   <script src="//cdnjs.cloudflare.com/ajax/libs/jszip/2.4.0/jszip.min.js"></script>
@@ -134,7 +330,7 @@
       if(e.target.selectedIndex) {
         fm.load_face_ajax("examples/" + $(this).val());
       }
-    }).val("test-face.face").trigger("change");
+    }).val("wearnow.face").trigger("change");
 
     function load_file_input(e) { 
       var file = e.target.files[0],
