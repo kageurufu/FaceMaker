@@ -26,6 +26,57 @@
   border: 4px dashed green;
 }
 
+div.image-dropdown {
+  border: 1px solid black;
+  width: 100%;
+  height: 60px;
+  overflow: hidden;
+  transition: height 0.1s;
+}
 
+div.image-dropdown:hover {
+  transition: height 0.5s;
+}
 
+div.image-dropdown input {
+  position: absolute;
+  top: 0;
+  left: 0;
+  opacity: 0;
+}
 
+div.image-dropdown .selected {
+  max-width: 100%;
+  height: 50px;
+  background-position: left;
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+div.image-dropdown .options {
+  display: none;
+  z-index: 1000;
+  left: 0px;
+  max-height: 400px;
+  width: 100%;
+  overflow-y: auto;
+  margin-left: 15px;
+  margin-right: 15px;
+  padding: 6px 12px;
+  border: 1px black solid;
+  border-top: 0px;
+
+  background-color: white;
+}
+
+div.image-dropdown:hover .options {
+  display: block;
+  position: absolute;
+}
+
+div.image-dropdown .options label {
+  width: 100%;
+  background-repeat: no-repeat;
+  background-color: white;
+  border: 1px gray solid;
+}

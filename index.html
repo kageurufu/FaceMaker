@@ -46,8 +46,49 @@
   <div class="container">
     <div class="row">
       <!-- Preview -->
-      <div class="col-lg-5 col-lg-push-7 text-right">
-        <canvas width="320" height="320" id="preview"></canvas>
+      <div class="col-lg-5 col-lg-push-7">
+        <div class="row">
+          <div class="col-lg-12">
+            <canvas width="320" height="320" id="preview"></canvas>
+          </div>
+        </div>
+
+        <!-- Test Options -->
+        <div class="row">
+          <div class="col-lg-12 form-horizontal">
+            <h3>Test Options</h3>
+            <div class="form-group">
+              <div class="col-lg-8 col-lg-offset-4 checkbox">
+                <label>
+                  <input type="checkbox" id="low_power_mode">
+                  Dimmed display (low power)
+                </label>
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="col-lg-8 col-lg-offset-4 checkbox">
+                <label>
+                  <input type="checkbox" id="fake_date_time">
+                  Fake date and time
+                </label>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="control-label col-lg-4">Fake date</label>
+              <div class="col-lg-8">
+                <input type='date' class="form-control" id="fake_date">
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="control-label col-lg-4">Fake time</label>
+              <div class="col-lg-8">
+                <input type="time" class="form-control" id="fake_time">
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- /Test Options -->
+
       </div>
 
       <!-- Editor -->
@@ -118,8 +159,8 @@
     {{#description}}
     <div class="row">
       <div class="col-lg-12">
-        <label class="control-label col-lg-2">Title</label>
-        <div class="col-lg-6">
+        <label class="control-label col-lg-3">Title</label>
+        <div class="col-lg-9">
           <input type="text" class="form-control" value="{{title}}">
         </div>
       </div>
@@ -130,6 +171,7 @@
       {{#watchface:index}}
       <div class="panel panel-default">
         <div class="panel-heading">
+            <button class="text-danger close" on-click="removeLayer">&times;</button>
           <a href="#editor-layer-{{index}}" data-toggle="collapse" data-parent="#editor-layers">
             <h4 class="panel-title">Layer {{id}} - {{type}}</h4>
           </a>
@@ -142,13 +184,32 @@
       {{/watchface}}
     </div>
 
+
     {{#images}}
       {{#each images:hash}}
-        {{hash}}
-        <img src="{{img.src}}">
+        <image name="{{hash}}" src="{{img.src}}" width="{{img.width}}" height="{{img.height}}"/>
       {{/each}}
     {{/images}}
+
+    {{#fonts}}
+      {{#each fonts:font_name}}
+        <font name="{{name}}" data="{{data}}"/>
+      {{/each}}
+    {{/fonts}}
   {{/face}}
+
+  <div class="form-group text-right">
+    <div class="col-lg-12">
+      Add new 
+      <div class="btn-group">
+        <button type="button" class="btn btn-default" on-click="call:add_shape">Shape</button>
+        <button type="button" class="btn btn-default" on-click="call:add_image">Image</button>
+        <button type="button" class="btn btn-default" on-click="call:add_text">Text</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Partials, for later use -->
   <!-- {{>Editor}} -->
   {{#if type == 'shape'}}
     {{>shapeEditor}}
@@ -239,6 +300,19 @@
           <input class="form-control" value="{{size}}">
         </div>
       </div>
+      <div class="form-group">
+        <label class="control-label col-lg-3">Font</label>
+        <div class="col-lg-9">
+          <select class="form-control" value="{{font_hash}}">
+            <option value="">No custom font</option>
+            {{#each fonts}}
+              <optgroup style="font-family: {{name}}" label="{{filename}}">
+                <option value="{{filename}}">{{filename}}</option>
+              </optgroup>
+            {{/each}}
+          </select>
+        </div>
+      </div>
 
       <div class="form-group">
         <div class="col-lg-9 col-lg-push-3 checkbox">
@@ -322,6 +396,14 @@
       </div>
     </div>
     <div class="col-lg-6">
+      {{#if shape_type == 2}}
+        <div class="form-group">
+          <label class="control-label col-lg-3">Sides</label>
+          <div class="col-lg-9">
+            <input type="text" value="{{sides}}" class="form-control">
+          </div>
+        </div>
+      {{/if}}
       <div class="form-group">
         <label class="control-label col-lg-3">Width</label>
         <div class="col-lg-9">
@@ -341,6 +423,14 @@
         </div>
       </div>
       
+      <div class="form-group">
+        <div class="col-lg-9 col-lg-push-3 checkbox">
+          <label>
+            <input type="checkbox" checked="{{low_power}}">
+            Display when Dimmed
+          </label>
+        </div>
+      </div>
       
     </div>
   </div>
@@ -352,7 +442,73 @@
   <!-- {{/shapeEditor}} -->
 
   <!-- {{>imageEditor}} -->
+    <!-- Image selector, css handles drawing this -->
 
+    <div class="form-group">
+      <label class="control-label col-lg-3">Image</label>
+      <div class="col-lg-9">
+        <div class="image-dropdown form-control">
+          <div class="selected image-{{hash}}"></div>
+          <div class="options">
+          {{#each images:img_hash}}
+            <label class="image-{{img_hash}}">
+              <input type="radio" name="{{hash}}" value="{{img_hash}}">
+            </label>
+          {{/each}}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-lg-6">
+
+      </div>
+      <div class="col-lg-6">
+        <div class="form-group">
+          <label class="control-label col-lg-3">Alignment</label>
+          <div class="col-lg-9">
+            <select class="form-control" type="number" value='{{alignment}}'>
+              <option value="0">Top Left</option>
+              <option value="1">Top Center</option>
+              <option value="2">Top Right</option>
+              <option value="3">Center Left</option>
+              <option value="4">Center</option>
+              <option value="5">Center Right</option>
+              <option value="6">Bottom Left</option>
+              <option value="7">Bottom Center</option>
+              <option value="8">Bottom Right</option>
+            </select>
+          </div>
+        </div>
+
+      <div class="form-group">
+        <label class="control-label col-lg-3">X Pos</label>
+        <div class="col-lg-9">
+          <input class="form-control" value="{{x}}">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="control-label col-lg-3">Y Pos</label>
+        <div class="col-lg-9">
+          <input class="form-control" value="{{y}}">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="control-label col-lg-3">Rotation</label>
+        <div class="col-lg-9">
+          <input class="form-control" value="{{r}}">
+        </div>
+      </div>
+
+      </div>
+    </div>
+
+    <dl>
+    {{#each .:k}}
+      <dt>{{k}}</dt><dd>{{.}}</dd>
+    {{/each}}
+    </dl>
   <!-- {{/imageEditor}} -->
 
       <!-- Select Input
@@ -394,6 +550,7 @@
   <script src="js/facemaker.js"></script>  
   <script src="js/facemaker.formatter.js"></script>
   <script src="js/facemaker.editor.js"></script>
+  <script src="js/facemaker.zip.js"></script>
 
   <script>
     var fm = new FaceMaker({
@@ -407,7 +564,7 @@
       if(e.target.selectedIndex) {
         fm.load_face_ajax("examples/" + $(this).val());
       }
-    }).val("wearnow.face").trigger("change");
+    }).val("nightmare-before-christmas.face").trigger("change");
 
     function load_file_input(e) { 
       var file = e.target.files[0],
@@ -460,5 +617,6 @@
       window.drop = e;
     });
   </script>
+  <style id="font-config"></style>
 </body>
 </html>

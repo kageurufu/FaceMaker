@@ -1,6 +1,69 @@
 (function(FM) {
-  var m_names = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-  var m_names_short = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"];
+
+  var m_names = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+      m_names_short = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"],
+      conditional_regex = /\$([\d]+)([><]\=?)([\d]+)\?([\d\w]+):([\d\w]+)\$/g,
+      math_regex = /\(?([\d]+)([\+\-\*\/])([\d]+)\)?/g;
+
+  FM.prototype.parse = function(input_str) {
+    var fm = this;
+    
+    return fm.calculate_conditionals(fm.calculate_math(fm.replace_tags(input_str)));
+  };
+
+  FM.prototype.parseInt = function(input_str) {
+    return parseInt(this.parse(input_str));
+  }
+
+  FM.prototype.calculate_math = function(input_str) {
+    /* This needs to handle math in strings, at the moment it will
+     * look for [\d]+[\+\-\*\/][\d]+ (so any numbers, followed by
+     * a mathematical operator, followed by another number) and replace
+     * it with the calculated value
+     */
+
+     return input_str.replace(this._math_regex, 
+      function(match, val1, op, val2) {
+        val1 = parseInt(val1);
+        val2 = parseInt(val2);
+
+        switch(op) {
+          case '+':
+          return val1 + val2;
+          case '-':
+          return val1 - val2;
+          case '*':
+          return val1 * val2;
+          case '/':
+          return val1 / val2;
+        };
+
+      });
+   };
+
+
+   FM.prototype.calculate_conditionals = function(input_str) {
+    return input_str.replace(this.conditional_regex,
+      function(match, left, op, right, trueval, falseval) {
+        left = parseInt(left);
+        right = parseInt(right);
+
+        switch(op) {
+          case '>':
+          return left > right ? trueval : falseval;
+          case '<':
+          return left < right ? trueval : falseval;
+          case '>=':
+          return left >= right ? trueval : falseval;
+          case '<=':
+          return left <= right ? trueval : falseval;
+        }
+      });
+  };
+
+  FM.prototype.replace_tags = function(input_str) {
+    return input_str.replace(/#(\w+)#/g, this.tags_replacer);
+  };
 
   FM.prototype.tags_replacer = function(full_match, match) {
     var d = new Date();
@@ -184,4 +247,5 @@
 
     return "0";
   };
+  
 })(FaceMaker)

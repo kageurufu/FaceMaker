@@ -3,9 +3,9 @@ FaceMaker
 
 Web based watchface designer for Facer (Android Wear)
 
-At the moment, its really just a static renderer for faces though
-
-The variables, once I finish implementing all of them should update though
+There are some issues with this still, but we seem to be outputting faces fully compatible
+with the latest version of Facer. You can add and remove layers, and modify most aspects of
+a layer. The "Test Options" are currently non-functional however.
 
 TODO (Rendering)
 ================
@@ -16,28 +16,36 @@ TODO (Rendering)
 * [ ] Rotation for images
 * [X] Math for tags
 * [X] Conditional Support
-* [ ] Font support
+* [X] Font support
+* [ ] Add Images
+* [ ] Add Fonts
+* [ ] Figure out how description.build effects things
 
 Thoughts
 ========
 
-Instead of trying to properly tokenize and split up the Tags and Conditionals,
-I could recursively search for groups of $something$ for conditionals, using
-String.replace(regexp, func(match, p...))
+Theres some major disconnects between some old faces and newer ones. It seems like
+the "build" key in description.json is highly relevant. Faces without this seem to
+have the wrong image alignment. I need to either
 
-That could work, I need to experiment.
-
-UPDATE: it worked.
+1. Find an old copy of facer and play with the editor
+2. Add a warning that old faces may not play nicely, but when fixed they will be updated
 
 Fonts
 =====
 
-Perhaps these could be loaded into css using Base64, I'll have to experiment
-I could just define each font as its own font-family (filename.replace(/\s/g, "_"))
-and use them that way. I've never ajax loaded fonts before
+Are rendered by placing the base64 in a font tag in css, and using it as the family.
+
+I can't figure out a better way of doing this, although it seems to work well
 
 Editor
-######
+======
 
-This is waiting until the rendering is (mostly) working. I might start on it sooner
-though
+Image and shape editor still arent perfect, text is just about done. I'd like to add 
+some sort of code assist for tags, math, and conditionals, but thats a ways off.
+
+I'd also like to write the tags in some better way, so the Ractive editor could be 
+responsible for rendering the help at the bottom, and make it easier to add more in 
+the future. I also need to play with Facer and see if things like conditional results 
+can be used in math, or vice-versa, or if Facer only applies it's parsing in a single
+iteration.
