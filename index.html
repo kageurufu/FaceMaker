@@ -194,19 +194,19 @@
       <div class="form-group">
         <label class="control-label col-lg-4">Color</label>
         <div class="col-lg-8">
-          <input class="form-control" value="{{color}}">
+          <color class="form-control" argb="{{color}}"/>
         </div>
       </div>
       <div class="form-group">
         <label class="control-label col-lg-4">Dim Color</label>
         <div class="col-lg-8">
-          <input class="form-control" value="{{low_power_color}}">
+          <color argb="{{low_power_color}}" class="form-control"/>
         </div>
       </div>
       <div class="form-group">
         <label class="control-label col-lg-4">BG Color</label>
         <div class="col-lg-8">
-          <input class="form-control" value="{{bgcolor}}">
+          <color class="form-control" argb="{{bgcolor}}"/>
         </div>
       </div>
     </div>
@@ -271,7 +271,84 @@
   <!-- {{/textEditor}} -->
 
   <!-- {{>shapeEditor}} -->
-
+  <div class="row">
+    <div class="col-lg-6">
+      <div class="form-group">
+        <label class="control-label col-lg-3">Type</label>
+        <div class="col-lg-9">
+          <select value="{{shape_type}}" class="form-control">
+            <option value="0">Circle</option>
+            <option value="1">Square</option>
+            <option value="2">Polygon</option>
+            <option value="3">Line</option>
+            <option value="4">Triangle</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="control-label col-lg-3">Radius</label>
+        <div class="col-lg-9">
+          <input type="text" class="form-control" value="{{radius}}">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="control-label col-lg-3">Fill</label>
+        <div class="col-lg-9">
+          <select class="form-control" value="{{shape_opt}}">
+            <option value="0">Fill</option>
+            <option value="1">Stroke</option>
+          </select>
+        </div>
+      </div>
+      {{#if shape_opt == 1}}
+        <div class="form-group">
+          <label class="control-label col-lg-3">Stroke</label>
+          <div class="col-lg-9">
+            <input type="text" class="form-control" value="{{stroke_size}}">
+          </div>
+        </div>
+      {{/if}}
+      <div class="form-group">
+        <label class="control-label col-lg-3">Color</label>
+        <div class="col-lg-9">
+          <color argb="{{color}}" class="form-control"/>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="control-label col-lg-3">Opacity</label>
+        <div class="col-lg-9">
+          <input type="text" class="form-control" value="{{opacity}}">
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-6">
+      <div class="form-group">
+        <label class="control-label col-lg-3">Width</label>
+        <div class="col-lg-9">
+          <input type="text" value="{{width}}" class="form-control">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="control-label col-lg-3">Height</label>
+        <div class="col-lg-9">
+          <input type="text" value="{{height}}" class="form-control">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="control-label col-lg-3">Rotation</label>
+        <div class="col-lg-9">
+          <input type="text" value="{{r}}" class="form-control">
+        </div>
+      </div>
+      
+      
+    </div>
+  </div>
+    <dl>
+    {{#each .:k}}
+      <dt>{{k}}</dt><dd>{{.}}</dd>
+    {{/each}}
+    </dl>
   <!-- {{/shapeEditor}} -->
 
   <!-- {{>imageEditor}} -->
