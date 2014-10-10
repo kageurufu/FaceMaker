@@ -225,54 +225,83 @@
   <!-- {{>textEditor}} -->
   <div class="row">
     <div class="col-lg-6">
-      <div class="form-group">
-        <label class="control-label col-lg-3">Text</label>
-        <div class="col-lg-9">
-          <input class="form-control" value="{{text}}">
-        </div>
-      </div>
-      <div class="form-group">
-        <label class="control-label col-lg-3">X Pos</label>
-        <div class="col-lg-9">
-          <input class="form-control" value="{{x}}">
-        </div>
-      </div>
-      <div class="form-group">
-        <label class="control-label col-lg-3">Y Pos</label>
-        <div class="col-lg-9">
-          <input class="form-control" value="{{y}}">
-        </div>
-      </div>
-      <div class="form-group">
-        <label class="control-label col-lg-3">Opacity</label>
-        <div class="col-lg-9">
-          <input class="form-control" value="{{opacity}}">
-        </div>
-      </div>
-      
-      <!-- Colors dont work yet, need to fix this -->
-
-      <div class="form-group">
-        <label class="control-label col-lg-4">Color</label>
-        <div class="col-lg-8">
-          <color class="form-control" argb="{{color}}"/>
-        </div>
-      </div>
-      <div class="form-group">
-        <label class="control-label col-lg-4">Dim Color</label>
-        <div class="col-lg-8">
-          <color argb="{{low_power_color}}" class="form-control"/>
-        </div>
-      </div>
-      <div class="form-group">
-        <label class="control-label col-lg-4">BG Color</label>
-        <div class="col-lg-8">
-          <color class="form-control" argb="{{bgcolor}}"/>
-        </div>
-      </div>
+      {{>field_text}}
+      {{>field_x_y}}
+      {{>field_color}}
+      {{>field_low_power_color}}
+      {{>field_bgcolor}}
     </div>
 
     <div class="col-lg-6">
+      {{>field_text_alignment}} 
+      {{>field_text_transform}}
+      {{>field_opacity}}
+      {{>field_rotation}}
+
+      {{>field_size}}
+      {{>field_font}}
+      {{>field_italic}}
+      {{>field_bold}}
+
+      {{>field_low_power}}
+    </div>
+  </div>
+  <!-- {{/textEditor}} -->
+
+  <!-- {{>shapeEditor}} -->
+  <div class="row">
+    <div class="col-lg-6">
+      {{>field_shape_type}}
+      {{>field_radius}}
+      {{>field_shape_opt}}
+      
+      {{#if shape_opt == 1}}
+        {{>field_stroke}}
+      {{/if}}
+      
+      {{>field_color}}
+      {{>field_opacity}}
+    </div>
+    <div class="col-lg-6">
+      {{#if shape_type == 2}}
+        {{>field_sides}}
+      {{/if}}
+      {{>field_x_y}}
+      {{#if shape_type == 1 || shape_type == 3}}
+        {{>field_width_height}}
+      {{/if}}
+      {{>field_rotation}}
+      {{>field_low_power}}
+    </div>
+  </div>
+  <!-- {{/shapeEditor}} -->
+
+  <!-- {{>imageEditor}} -->
+    {{>field_image_selector}}
+    <div class="row">
+      <div class="col-lg-6">
+        {{>field_width_height}}
+        {{>field_opacity}}
+      </div>
+      <div class="col-lg-6">
+        {{>field_image_alignment}}
+        {{>field_x_y}}
+        {{>field_rotation}}
+        {{>field_low_power}}
+      </div>
+    </div>
+  <!-- {{/imageEditor}} -->
+
+  <!-- {{>field_text}} -->
+    <div class="form-group">
+      <label class="control-label col-lg-3">Text</label>
+      <div class="col-lg-9">
+        <input class="form-control" value="{{text}}">
+      </div>
+    </div>
+  <!-- {{/field_text}} -->
+
+  <!-- {{>field_text_alignment}} -->
       <div class="form-group">
         <label class="control-label col-lg-3">Alignment</label>
         <div class="col-lg-9">
@@ -283,6 +312,9 @@
           </select>
         </div>
       </div>
+  <!-- {{/field_text_alignment}} -->
+
+  <!-- {{>field_text_transform}} -->
       <div class="form-group">
         <label class="control-label col-lg-3">Transform</label>
         <div class="col-lg-9">
@@ -293,13 +325,18 @@
           </select>
         </div>
       </div>
+  <!-- {{/field_text_transform}} -->
 
+  <!-- {{>field_size}} -->
       <div class="form-group">
         <label class="control-label col-lg-3">Size</label>
         <div class="col-lg-9">
           <input class="form-control" value="{{size}}">
         </div>
       </div>
+  <!-- {{/field_size}} -->
+
+  <!-- {{>field_font}} -->
       <div class="form-group">
         <label class="control-label col-lg-3">Font</label>
         <div class="col-lg-9">
@@ -313,7 +350,9 @@
           </select>
         </div>
       </div>
+  <!-- {{/field_font}} -->
 
+  <!-- {{>field_italic}} -->
       <div class="form-group">
         <div class="col-lg-9 col-lg-push-3 checkbox">
           <label class="control-label">
@@ -322,7 +361,9 @@
           </label>
         </div>
       </div>
+  <!-- {{/field_italic}} -->
 
+  <!-- {{>field_bold}} -->
       <div class="form-group">
         <div class="col-lg-9 col-lg-push-3 checkbox">
           <label class="control-label">
@@ -331,119 +372,90 @@
           </label>
         </div>
       </div>
+  <!-- {{/field_bold}} -->
 
-      <div class="form-group">
-        <div class="col-lg-9 col-lg-push-3 checkbox">
-          <label class="control-label">
-            <input type="checkbox" checked="{{low_power}}">
-            Display when Dimmed
-          </label>
-        </div>
+  <!-- {{>field_shape_type}} -->
+    <div class="form-group">
+      <label class="control-label col-lg-3">Type</label>
+      <div class="col-lg-9">
+        <select value="{{shape_type}}" class="form-control">
+          <option value="0">Circle</option>
+          <option value="1">Square</option>
+          <option value="2">Polygon</option>
+          <option value="3">Line</option>
+          <option value="4">Triangle</option>
+        </select>
       </div>
     </div>
-  </div>
-  <!-- {{/textEditor}} -->
+  <!-- {{/field_shape_type}} -->
 
-  <!-- {{>shapeEditor}} -->
-  <div class="row">
-    <div class="col-lg-6">
-      <div class="form-group">
-        <label class="control-label col-lg-3">Type</label>
-        <div class="col-lg-9">
-          <select value="{{shape_type}}" class="form-control">
-            <option value="0">Circle</option>
-            <option value="1">Square</option>
-            <option value="2">Polygon</option>
-            <option value="3">Line</option>
-            <option value="4">Triangle</option>
-          </select>
-        </div>
-      </div>
-      <div class="form-group">
-        <label class="control-label col-lg-3">Radius</label>
-        <div class="col-lg-9">
-          <input type="text" class="form-control" value="{{radius}}">
-        </div>
-      </div>
-      <div class="form-group">
-        <label class="control-label col-lg-3">Fill</label>
-        <div class="col-lg-9">
-          <select class="form-control" value="{{shape_opt}}">
-            <option value="0">Fill</option>
-            <option value="1">Stroke</option>
-          </select>
-        </div>
-      </div>
-      {{#if shape_opt == 1}}
-        <div class="form-group">
-          <label class="control-label col-lg-3">Stroke</label>
-          <div class="col-lg-9">
-            <input type="text" class="form-control" value="{{stroke_size}}">
-          </div>
-        </div>
-      {{/if}}
-      <div class="form-group">
-        <label class="control-label col-lg-3">Color</label>
-        <div class="col-lg-9">
-          <color argb="{{color}}" class="form-control"/>
-        </div>
-      </div>
-      <div class="form-group">
-        <label class="control-label col-lg-3">Opacity</label>
-        <div class="col-lg-9">
-          <input type="text" class="form-control" value="{{opacity}}">
-        </div>
+  <!-- {{>field_radius}} -->
+    <div class="form-group">
+      <label class="control-label col-lg-3">Radius</label>
+      <div class="col-lg-9">
+        <input type="text" class="form-control" value="{{radius}}">
       </div>
     </div>
-    <div class="col-lg-6">
-      {{#if shape_type == 2}}
-        <div class="form-group">
-          <label class="control-label col-lg-3">Sides</label>
-          <div class="col-lg-9">
-            <input type="text" value="{{sides}}" class="form-control">
-          </div>
-        </div>
-      {{/if}}
-      <div class="form-group">
-        <label class="control-label col-lg-3">Width</label>
-        <div class="col-lg-9">
-          <input type="text" value="{{width}}" class="form-control">
-        </div>
+  <!-- {{/field_radius}} -->
+
+  <!-- {{>field_shape_opt}} -->
+    <div class="form-group">
+      <label class="control-label col-lg-3">Fill</label>
+      <div class="col-lg-9">
+        <select class="form-control" value="{{shape_opt}}">
+          <option value="0">Fill</option>
+          <option value="1">Stroke</option>
+        </select>
       </div>
-      <div class="form-group">
-        <label class="control-label col-lg-3">Height</label>
-        <div class="col-lg-9">
-          <input type="text" value="{{height}}" class="form-control">
-        </div>
-      </div>
-      <div class="form-group">
-        <label class="control-label col-lg-3">Rotation</label>
-        <div class="col-lg-9">
-          <input type="text" value="{{r}}" class="form-control">
-        </div>
-      </div>
-      
-      <div class="form-group">
-        <div class="col-lg-9 col-lg-push-3 checkbox">
-          <label>
-            <input type="checkbox" checked="{{low_power}}">
-            Display when Dimmed
-          </label>
-        </div>
-      </div>
-      
     </div>
-  </div>
-    <dl>
-    {{#each .:k}}
-      <dt>{{k}}</dt><dd>{{.}}</dd>
-    {{/each}}
-    </dl>
-  <!-- {{/shapeEditor}} -->
+  <!-- {{/field_shape_opt}} -->
 
-  <!-- {{>imageEditor}} -->
-    <!-- Image selector, css handles drawing this -->
+  <!-- {{>field_stroke}} -->
+    <div class="form-group">
+      <label class="control-label col-lg-3">Stroke</label>
+      <div class="col-lg-9">
+        <input type="text" class="form-control" value="{{stroke_size}}">
+      </div>
+    </div>
+  <!-- {{/field_stroke}} -->
 
+  <!-- {{>field_color}} -->
+    <div class="form-group">
+      <label class="control-label col-lg-4">Color</label>
+      <div class="col-lg-8">
+        <color argb="{{color}}" class="form-control"/>
+      </div>
+    </div>
+  <!-- {{/field_color}} -->
+
+  <!-- {{>field_bgcolor}} -->
+    <div class="form-group">
+      <label class="control-label col-lg-4">BG Color</label>
+      <div class="col-lg-8">
+        <color argb="{{bgcolor}}" class="form-control"/>
+      </div>
+    </div>
+  <!-- {{/field_bgcolor}} -->
+
+  <!-- {{>field_low_power_color}} -->
+    <div class="form-group">
+      <label class="control-label col-lg-4">Dim Color</label>
+      <div class="col-lg-8">
+        <color argb="{{low_power_color}}" class="form-control"/>
+      </div>
+    </div>
+  <!-- {{/field_low_power_color}} -->
+
+  <!-- {{>field_sides}} -->
+    <div class="form-group">
+      <label class="control-label col-lg-3">Sides</label>
+      <div class="col-lg-9">
+        <input type="text" value="{{sides}}" class="form-control">
+      </div>
+    </div>
+  <!-- {{/field_sides}} -->
+
+  <!-- {{>field_image_selector}} -->
     <div class="form-group">
       <label class="control-label col-lg-3">Image</label>
       <div class="col-lg-9">
@@ -459,57 +471,88 @@
         </div>
       </div>
     </div>
+  <!-- {{/field_image_selector}} -->
 
-    <div class="row">
-      <div class="col-lg-6">
-
-      </div>
-      <div class="col-lg-6">
-        <div class="form-group">
-          <label class="control-label col-lg-3">Alignment</label>
-          <div class="col-lg-9">
-            <select class="form-control" type="number" value='{{alignment}}'>
-              <option value="0">Top Left</option>
-              <option value="1">Top Center</option>
-              <option value="2">Top Right</option>
-              <option value="3">Center Left</option>
-              <option value="4">Center</option>
-              <option value="5">Center Right</option>
-              <option value="6">Bottom Left</option>
-              <option value="7">Bottom Center</option>
-              <option value="8">Bottom Right</option>
-            </select>
-          </div>
-        </div>
-
-      <div class="form-group">
-        <label class="control-label col-lg-3">X Pos</label>
-        <div class="col-lg-9">
-          <input class="form-control" value="{{x}}">
-        </div>
-      </div>
-      <div class="form-group">
-        <label class="control-label col-lg-3">Y Pos</label>
-        <div class="col-lg-9">
-          <input class="form-control" value="{{y}}">
-        </div>
-      </div>
-      <div class="form-group">
-        <label class="control-label col-lg-3">Rotation</label>
-        <div class="col-lg-9">
-          <input class="form-control" value="{{r}}">
-        </div>
-      </div>
-
+  <!-- {{>field_image_alignment}} -->
+    <div class="form-group">
+      <label class="control-label col-lg-3">Alignment</label>
+      <div class="col-lg-9">
+        <select class="form-control" type="number" value='{{alignment}}'>
+          <option value="0">Top Left</option>
+          <option value="1">Top Center</option>
+          <option value="2">Top Right</option>
+          <option value="3">Center Left</option>
+          <option value="4">Center</option>
+          <option value="5">Center Right</option>
+          <option value="6">Bottom Left</option>
+          <option value="7">Bottom Center</option>
+          <option value="8">Bottom Right</option>
+        </select>
       </div>
     </div>
+  <!-- {{/field_image_alignment}} -->
 
-    <dl>
-    {{#each .:k}}
-      <dt>{{k}}</dt><dd>{{.}}</dd>
-    {{/each}}
-    </dl>
-  <!-- {{/imageEditor}} -->
+  <!-- {{>field_low_power}} -->
+    <div class="form-group">
+      <div class="col-lg-9 col-lg-push-3 checkbox">
+        <label class="control-label">
+          <input type="checkbox" checked="{{low_power}}">
+          Display when Dimmed
+        </label>
+      </div>
+    </div>
+  <!-- {{/field_low_power}} -->
+
+  <!-- {{>field_x_y}} -->
+    <div class="form-group">
+      <label class="control-label col-lg-3">X Pos</label>
+      <div class="col-lg-9">
+        <input class="form-control" value="{{x}}">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="control-label col-lg-3">Y Pos</label>
+      <div class="col-lg-9">
+        <input class="form-control" value="{{y}}">
+      </div>
+    </div>
+  <!-- {{/field_x_y}} -->
+
+  <!-- {{>field_width_height}} -->
+    <div class="form-group">
+      <label class="control-label col-lg-3">Width</label>
+      <div class="col-lg-9">
+        <input type="text" value="{{width}}" class="form-control">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="control-label col-lg-3">Height</label>
+      <div class="col-lg-9">
+        <input type="text" value="{{height}}" class="form-control">
+      </div>
+    </div>
+  <!-- {{/field_width_height}} -->
+
+  <!-- {{>field_opacity}} -->
+    <div class="form-group">
+      <label class="control-label col-lg-3">Opacity</label>
+      <div class="col-lg-9">
+        <input class="form-control" value="{{opacity}}">
+      </div>
+    </div>
+  <!-- {{/field_opacity}} -->
+
+  <!-- {{>field_rotation}} -->
+    <div class="form-group">
+      <label class="control-label col-lg-3">Rotation</label>
+      <div class="col-lg-9">
+        <input type="text" value="{{r}}" class="form-control">
+      </div>
+    </div>
+  <!-- {{/field_rotation}} -->
+
+      
+      
 
       <!-- Select Input
       <div class="row">

@@ -254,7 +254,7 @@ var FaceMaker = (function() {
         var num_sides = parseInt(layer.sides),
         angle = 2 * Math.PI / num_sides;
         
-        var rotation = 90 * Math.PI / 180;
+        var rotation = (90 + fm.parseInt(layer.r)) * Math.PI / 180;
 
         c.beginPath();
         

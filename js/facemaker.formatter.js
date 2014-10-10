@@ -6,9 +6,14 @@
       math_regex = /\(?([\d]+)([\+\-\*\/])([\d]+)\)?/g;
 
   FM.prototype.parse = function(input_str) {
-    var fm = this;
-    
-    return fm.calculate_conditionals(fm.calculate_math(fm.replace_tags(input_str)));
+    var fm = this,
+        val = input_str;
+  
+    val = fm.replace_tags(val);
+    val = fm.calculate_math(val);
+    val = fm.calculate_conditionals(val);
+
+    return val;
   };
 
   FM.prototype.parseInt = function(input_str) {
@@ -22,7 +27,7 @@
      * it with the calculated value
      */
 
-     return input_str.replace(this._math_regex, 
+     return input_str.replace(math_regex, 
       function(match, val1, op, val2) {
         val1 = parseInt(val1);
         val2 = parseInt(val2);
