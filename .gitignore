@@ -1,3 +1,5 @@
 *.apk
 examples/*
 !examples/*.face
+*.swp
+testing/*

@@ -3,36 +3,36 @@
 var FaceMaker = (function() {
 
   var CURRENT_FACER_VERSION = '0.90.11',
-      ShapeTypes = {
-        circle: 0,
-        square: 1,
-        polygon: 2,
-        line: 3,
-        triangle: 4
-      },
-      ImageAlignment = {
-        top_left: 0,
-        top_center: 1,
-        top_right: 2,
-        center_left: 3,
-        center: 4,
-        center_right: 5,
-        bottom_left: 6,
-        bottom_center: 7,
-        bottom_right: 8
-      },
-      Alignment = {
-        left: 0,
-        center: 1,
-        right: 2
-      },
-      Transform = {
-        uppercase: 1,
-        lowercase: 2
-      };
+    ShapeTypes = {
+      circle: 0,
+      square: 1,
+      polygon: 2,
+      line: 3,
+      triangle: 4
+    },
+    ImageAlignment = {
+      top_left: 0,
+      top_center: 1,
+      top_right: 2,
+      center_left: 3,
+      center: 4,
+      center_right: 5,
+      bottom_left: 6,
+      bottom_center: 7,
+      bottom_right: 8
+    },
+    Alignment = {
+      left: 0,
+      center: 1,
+      right: 2
+    },
+    Transform = {
+      uppercase: 1,
+      lowercase: 2
+    };
 
   var FM = function(options) {
-    if(!!options) {
+    if (!!options) {
       this.options = $.extend({}, this.defaults, this.options);
     } else {
       this.options = $.extend({}, this.defaults);
@@ -48,7 +48,7 @@ var FaceMaker = (function() {
     this.face = null;
     this.rendering = false;
 
-    for(var i in this) {
+    for (var i in this) {
       if (i.indexOf("init_") == 0 && typeof(this[i]) == 'function') {
         this[i].bind(this)();
       }
@@ -68,12 +68,12 @@ var FaceMaker = (function() {
     this.download_face_button.click(this.download_face.bind(this));
   }
 
-  FM.prototype.new_face = function() { 
+  FM.prototype.new_face = function() {
     this.rendering = false;
 
     var new_id;
 
-    for(new_id = ''; new_id.length < 32;) 
+    for (new_id = ''; new_id.length < 32;)
       new_id += Math.random().toString(36).substr(2, 1)
 
     this.face = {};
@@ -91,7 +91,7 @@ var FaceMaker = (function() {
     this.render();
     this.init_editor();
   }
-  
+
   FM.prototype.download_face = function() {
     this.download_zip_file();
   }
@@ -99,9 +99,9 @@ var FaceMaker = (function() {
 
   FM.prototype.render = function() {
     var fm = this,
-    c = fm.ctx;
+      c = fm.ctx;
 
-    if(!fm.rendering) {
+    if (!fm.rendering) {
       return;
     }
 
@@ -113,7 +113,7 @@ var FaceMaker = (function() {
     //For the moment, we use a 320px radius circle for clipping, per Moto 360
     c.save();
     c.beginPath();
-    c.arc(fm.canvas_width / 2, fm.canvas_height / 2, 160, 0, 2*Math.PI);
+    c.arc(fm.canvas_width / 2, fm.canvas_height / 2, 160, 0, 2 * Math.PI);
     c.closePath();
     c.clip();
 
@@ -122,8 +122,8 @@ var FaceMaker = (function() {
     c.lineWidth = 0;
     c.fillRect(0, 0, fm.canvas_width, fm.canvas_height);
 
-    for(var i in fm.face.watchface) {
-      if(fm.face.watchface.hasOwnProperty(i)) {
+    for (var i in fm.face.watchface) {
+      if (fm.face.watchface.hasOwnProperty(i)) {
         fm.draw_layer(fm.face.watchface[i]);
       }
     }
@@ -133,46 +133,46 @@ var FaceMaker = (function() {
 
     c.fillStyle = "rgb(255,255,255)"
     c.fillRect(0, 290, 320, 320);
-    
+
     requestAnimationFrame(fm.render.bind(this));
   };
 
   FM.prototype.draw_layer = function(layer) {
     var fm = this;
 
-    switch(layer.type) {
+    switch (layer.type) {
       case 'text':
-      fm._draw_text(layer);
-      break;
+        fm._draw_text(layer);
+        break;
       case 'shape':
-      fm._draw_shape(layer);
-      break;
+        fm._draw_shape(layer);
+        break;
       case 'image':
-      fm._draw_image(layer);
-      break;
+        fm._draw_image(layer);
+        break;
       default:
         break;
-        console.log( layer.type + " is not a valid layer type" );
+        console.log(layer.type + " is not a valid layer type");
     }
-  };  
+  };
 
   FM.prototype._draw_image = function(layer) {
     var fm = this,
-        image_hash = layer.hash,
-        image = fm.face.images[image_hash].img,
+      image_hash = layer.hash,
+      image = fm.face.images[image_hash].img,
 
-        x = fm.parseInt(layer.x),
-        y = fm.parseInt(layer.y),
-        w = fm.parseInt(layer.width),
-        h = fm.parseInt(layer.height);
+      x = fm.parseInt(layer.x),
+      y = fm.parseInt(layer.y),
+      w = fm.parseInt(layer.width),
+      h = fm.parseInt(layer.height);
 
-    switch(layer.alignment){
+    switch (layer.alignment) {
       case ImageAlignment.top_left:
         x -= w;
         y -= h;
         break;
       case ImageAlignment.top_center:
-        x -= w/2;
+        x -= w / 2;
         y -= h;
         break;
       case ImageAlignment.top_right:
@@ -180,20 +180,20 @@ var FaceMaker = (function() {
         break;
       case ImageAlignment.center_left:
         x -= w;
-        y -= h/2;
+        y -= h / 2;
         break;
       case ImageAlignment.center:
-        x -= w/2;
-        y -= h/2;
+        x -= w / 2;
+        y -= h / 2;
         break;
       case ImageAlignment.center_right:
-        y -= h/2;
+        y -= h / 2;
         break;
       case ImageAlignment.bottom_left:
         x -= w;
         break;
       case ImageAlignment.bottom_center:
-        x -= w/2;
+        x -= w / 2;
         break;
       case ImageAlignment.bottom_right:
         //This is the default rendering position
@@ -205,41 +205,41 @@ var FaceMaker = (function() {
 
   FM.prototype._draw_shape = function(layer) {
     var fm = this,
-    c = fm.ctx,
-    x = fm.parseInt(layer.x),
-    y = fm.parseInt(layer.y),
-    radius = fm.parseInt(layer.radius);
+      c = fm.ctx,
+      x = fm.parseInt(layer.x),
+      y = fm.parseInt(layer.y),
+      radius = fm.parseInt(layer.radius);
 
     /*
      * Some Notes, per Reverse Engineering
      * shape_opt 0 - Fill, 1 - Stroke
      */
-    if(layer.shape_opt) {
-       c.strokeStyle = fm._parseColor(layer.color, layer.opacity);
+    if (layer.shape_opt) {
+      c.strokeStyle = fm._parseColor(layer.color, layer.opacity);
     } else {
-       c.fillStyle = fm._parseColor(layer.color, layer.opacity);
+      c.fillStyle = fm._parseColor(layer.color, layer.opacity);
     }
 
     c.lineWidth = parseInt(layer.stroke_size) / 2;
 
-    switch(layer.shape_type) {
-       case ShapeTypes.circle:
-         c.beginPath();
-         c.arc(x, y, radius, 0, 2*Math.PI);
+    switch (layer.shape_type) {
+      case ShapeTypes.circle:
+        c.beginPath();
+        c.arc(x, y, radius, 0, 2 * Math.PI);
 
-         if(layer.shape_opt === 0) {
-           c.fill();
-         } else {
-           c.stroke();
-         }
+        if (layer.shape_opt === 0) {
+          c.fill();
+        } else {
+          c.stroke();
+        }
 
-         c.closePath();
+        c.closePath();
 
-         break;
-       case ShapeTypes.square:
-       case ShapeTypes.line:
+        break;
+      case ShapeTypes.square:
+      case ShapeTypes.line:
         //As far as I can tell, a line is just a rect, and a square is really a rect
-        if(layer.shape_opt === 0) {
+        if (layer.shape_opt === 0) {
           c.fillRect(x, y, parseInt(layer.width), parseInt(layer.height));
         } else {
           c.strokeRect(x, y, parseInt(layer.width), parseInt(layer.height));
@@ -249,43 +249,44 @@ var FaceMaker = (function() {
       case ShapeTypes.triangle:
         //Fun little hack to skip duplication of code
         layer.sides = "3";
-        
-        case ShapeTypes.polygon:
+
+      case ShapeTypes.polygon:
         var num_sides = parseInt(layer.sides),
-        angle = 2 * Math.PI / num_sides;
-        
+          angle = 2 * Math.PI / num_sides;
+
         var rotation = (90 + fm.parseInt(layer.r)) * Math.PI / 180;
 
         c.beginPath();
-        
+
         c.moveTo(x + radius * Math.cos(angle + rotation), y + radius * Math.sin(angle + rotation));
 
-        for( var i = 0; i <= num_sides; i++) {
+        for (var i = 0; i <= num_sides; i++) {
           c.lineTo(x + radius * Math.cos(i * angle + rotation), y + radius * Math.sin(i * angle + rotation));
         }
-        
+
         c.closePath();
 
-        if(layer.shape_opt) {
+        if (layer.shape_opt) {
           c.stroke();
         } else {
           c.fill();
         }
         break;
-      default: break;
+      default:
+        break;
     }
   }
 
 
   FM.prototype._draw_text = function(layer) {
     var fm = this,
-        c = fm.ctx,
-        rotation = fm.parseInt(layer.r),
-        x = fm.parseInt(layer.x),
-        y = fm.parseInt(layer.y),
-        text = fm.parse(layer.text);
+      c = fm.ctx,
+      rotation = fm.parseInt(layer.r),
+      x = fm.parseInt(layer.x),
+      y = fm.parseInt(layer.y),
+      text = fm.parse(layer.text);
 
-    if(layer.transform == Transform.uppercase) {
+    if (layer.transform == Transform.uppercase) {
       text = text.toUpperCase();
     } else if (layer.transform == Transform.lowercase) {
       text = text.toLowerCase();
@@ -299,7 +300,7 @@ var FaceMaker = (function() {
 
     c.fillStyle = fm._parseColor(layer.color, layer.opacity);
 
-    if(layer.font_hash) {
+    if (layer.font_hash) {
       c.font = layer.size + "px " + layer.font_hash.replace(/\W/g, '_');
     } else {
       c.font = layer.size + "px Arial";
@@ -312,23 +313,23 @@ var FaceMaker = (function() {
 
   FM.prototype._parseColor = function(color_str, opacity) {
     var color = parseInt(color_str),
-        r = color >> 16 & 0xFF,
-        g = color >>  8 & 0xFF,
-        b = color       & 0xFF,
-        o = this.parseInt(opacity) / 100;
+      r = color >> 16 & 0xFF,
+      g = color >> 8 & 0xFF,
+      b = color & 0xFF,
+      o = this.parseInt(opacity) / 100;
 
     return "rgba(" + r + "," + g + "," + b + "," + o + ")";
   };
 
   FM.prototype._parseAlignment = function(alignment) {
-    switch(alignment) {
+    switch (alignment) {
       case Alignment.center:
-      return 'center';
+        return 'center';
       case Alignment.right:
-      return 'right';
+        return 'right';
       case Alignment.left:
       default:
-      return 'left';
+        return 'left';
     }
   };
 

@@ -66,8 +66,6 @@
     for(var filename in zip_file.files) {
 
       var file = zip_file.file(filename);
-      console.log("Loading file " + filename);
-      console.log(file);
 
       if(filename === 'watchface.json') {
         face.watchface = JSON.parse(file.asText());
