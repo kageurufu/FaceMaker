@@ -57,7 +57,16 @@
     var fm = this,
       val = input_str;
 
+    //TODO: Do this WAAAAYYYY better. repeating works for now, but its ugly and stupid and hacky
     val = fm.replace_tags(val);
+    val = fm.calculate_math(val);
+    val = fm.calculate_conditionals(val);
+    val = fm.calculate_math(val);
+    val = fm.calculate_conditionals(val);
+    val = fm.calculate_math(val);
+    val = fm.calculate_conditionals(val);
+    val = fm.calculate_math(val);
+    val = fm.calculate_conditionals(val);
     val = fm.calculate_math(val);
     val = fm.calculate_conditionals(val);
 

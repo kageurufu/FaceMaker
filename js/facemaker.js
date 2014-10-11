@@ -11,15 +11,15 @@ var FaceMaker = (function() {
       triangle: 4
     },
     ImageAlignment = {
-      top_left: 0,
-      top_center: 1,
-      top_right: 2,
-      center_left: 3,
+      top_left: 8,
+      top_center: 7,
+      top_right: 6,
+      center_left: 5,
       center: 4,
-      center_right: 5,
-      bottom_left: 6,
-      bottom_center: 7,
-      bottom_right: 8
+      center_right: 3,
+      bottom_left: 2,
+      bottom_center: 1,
+      bottom_right: 0
     },
     Alignment = {
       left: 0,
@@ -158,49 +158,62 @@ var FaceMaker = (function() {
 
   FM.prototype._draw_image = function(layer) {
     var fm = this,
+      c = fm.ctx,
       image_hash = layer.hash,
       image = fm.face.images[image_hash].img,
 
       x = fm.parseInt(layer.x),
       y = fm.parseInt(layer.y),
+      ox = 0,
+      oy = 0,
       w = fm.parseInt(layer.width),
-      h = fm.parseInt(layer.height);
+      h = fm.parseInt(layer.height),
+      r = fm.parseInt(layer.r);
 
     switch (layer.alignment) {
       case ImageAlignment.top_left:
-        x -= w;
-        y -= h;
+        ox -= w;
+        oy -= h;
         break;
       case ImageAlignment.top_center:
-        x -= w / 2;
-        y -= h;
+        ox -= w / 2;
+        oy -= h;
         break;
       case ImageAlignment.top_right:
-        y -= h;
+        oy -= h;
         break;
       case ImageAlignment.center_left:
-        x -= w;
-        y -= h / 2;
+        ox -= w;
+        oy -= h / 2;
         break;
       case ImageAlignment.center:
-        x -= w / 2;
-        y -= h / 2;
+        ox -= w / 2;
+        oy -= h / 2;
         break;
       case ImageAlignment.center_right:
-        y -= h / 2;
+        oy -= h / 2;
         break;
       case ImageAlignment.bottom_left:
-        x -= w;
+        ox -= w;
         break;
       case ImageAlignment.bottom_center:
-        x -= w / 2;
+        ox -= w / 2;
         break;
       case ImageAlignment.bottom_right:
         //This is the default rendering position
         break;
     };
 
-    fm.ctx.drawImage(image, x, y, w, h);
+    //For rotation, theres a fair amount that needs to be done
+    //The easiest way, will be to save the canvas, translate,
+    //  rotate, draw, and restore
+    c.save()
+    c.translate(x, y);
+    c.rotate(r * Math.PI / 180);
+
+    c.drawImage(image, ox, oy, w, h);
+
+    c.restore();
   }
 
   FM.prototype._draw_shape = function(layer) {

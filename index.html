@@ -30,6 +30,7 @@
         <div class="navbar-form navbar-right">
           <select id="example_faces" class="form-control">
             <option>Example Faces</option>
+            <option value="DaytonaRolex.face">Daytona Rolex</option>
             <option value="angleface.face">Angle Face</option>
             <option value="executive-blue.face">Executive Blue</option>
             <option value="f-face.face">F-Face</option>
@@ -608,7 +609,7 @@
       if(e.target.selectedIndex) {
         fm.load_face_ajax("examples/" + $(this).val());
       }
-    }).val("nightmare-before-christmas.face").trigger("change");
+    }).val("DaytonaRolex.face").trigger("change");
 
     function load_file_input(e) { 
       var file = e.target.files[0],
