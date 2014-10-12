@@ -10,26 +10,16 @@ a layer. The "Test Options" are currently non-functional however.
 TODO (Rendering)
 ================
 
-* [ ] Implement all the Tags (Variables)
+* [X] Implement all the Tags (Variables)
 * [X] Go through and write a proper parser for variables instead of parseInt and breakage
-* [ ] Rotation for shapes
-* [ ] Rotation for images
+* [X] Rotation for shapes
+* [X] Rotation for images
 * [X] Math for tags
 * [X] Conditional Support
 * [X] Font support
 * [ ] Add Images
 * [ ] Add Fonts
-* [ ] Figure out how description.build effects things
-
-Thoughts
-========
-
-Theres some major disconnects between some old faces and newer ones. It seems like
-the "build" key in description.json is highly relevant. Faces without this seem to
-have the wrong image alignment. I need to either
-
-1. Find an old copy of facer and play with the editor
-2. Add a warning that old faces may not play nicely, but when fixed they will be updated
+* [ ] Figure out how description.build effects things 
 
 Fonts
 =====
@@ -44,8 +34,6 @@ Editor
 Image and shape editor still arent perfect, text is just about done. I'd like to add 
 some sort of code assist for tags, math, and conditionals, but thats a ways off.
 
-I'd also like to write the tags in some better way, so the Ractive editor could be 
-responsible for rendering the help at the bottom, and make it easier to add more in 
-the future. I also need to play with Facer and see if things like conditional results 
-can be used in math, or vice-versa, or if Facer only applies it's parsing in a single
-iteration.
+Tags are now handled a little better, through a static method on the FaceMaker class.
+They have a description as well, for the help text. This will be used for the help
+text. I'm not sure if that will be static or live as of yet.
