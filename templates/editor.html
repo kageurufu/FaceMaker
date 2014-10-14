@@ -1,0 +1,426 @@
+  {{#face}}
+  {{#description}}
+  <div class="form-group">
+  	<div class="col-lg-12">
+  		<label class="control-label col-lg-3">Title</label>
+  		<div class="col-lg-9">
+  			<input type="text" class="form-control" value="{{title}}">
+  		</div>
+  	</div>
+  </div>
+  {{/description}}
+
+  <div class="panel-group" id="editor-layers">
+  	{{#watchface:index}}
+  	<div class="panel panel-default">
+  		<div class="panel-heading">
+  			<button class="text-danger close" on-click="removeLayer">&times;</button>
+  			<a href="#editor-layer-{{index}}" data-toggle="collapse" data-parent="#editor-layers">
+  				<h4 class="panel-title">Layer {{id}} - {{type}}</h4>
+  			</a>
+  		</div>
+
+  		<div class="panel-collapse collapse" id="editor-layer-{{index}}" >
+  			{{>Editor}}
+  		</div>
+  	</div>
+  	{{/watchface}}
+  </div>
+
+
+  {{#images}}
+  {{#each images:hash}}
+  <image name="{{hash}}" src="{{img.src}}" width="{{img.width}}" height="{{img.height}}"/>
+  {{/each}}
+  {{/images}}
+
+  {{#fonts}}
+  {{#each fonts:font_name}}
+  <font name="{{name}}" data="{{data}}"/>
+  {{/each}}
+  {{/fonts}}
+  {{/face}}
+
+  <div class="form-group text-right">
+  	<div class="col-lg-12">
+  		Add new 
+  		<div class="btn-group">
+  			<button type="button" class="btn btn-default" on-click="call:add_shape">Shape</button>
+  			<button type="button" class="btn btn-default" on-click="call:add_image">Image</button>
+  			<button type="button" class="btn btn-default" on-click="call:add_text">Text</button>
+  		</div>
+  	</div>
+  </div>
+
+  <!-- Partials, for later use -->
+  <!-- {{>Editor}} -->
+  {{#if type == 'shape'}}
+  {{>shapeEditor}}
+  {{/if}}
+  {{#if type == 'text'}}
+  {{>textEditor}}
+  {{/if}}
+  {{#if type == 'image'}}
+  {{>imageEditor}}
+  {{/if}}
+  <!-- {{/Editor}} -->
+
+  <!-- {{>textEditor}} -->
+  <div class="row">
+  	<div class="col-lg-6">
+  		{{>field_text}}
+  		{{>field_x_y}}
+  		{{>field_color}}
+  		{{>field_low_power_color}}
+  		{{>field_bgcolor}}
+  	</div>
+
+  	<div class="col-lg-6">
+  		{{>field_text_alignment}} 
+  		{{>field_text_transform}}
+  		{{>field_opacity}}
+  		{{>field_rotation}}
+
+  		{{>field_size}}
+  		{{>field_font}}
+  		{{>field_italic}}
+  		{{>field_bold}}
+
+  		{{>field_low_power}}
+  	</div>
+  </div>
+  <!-- {{/textEditor}} -->
+
+  <!-- {{>shapeEditor}} -->
+  <div class="row">
+  	<div class="col-lg-6">
+  		{{>field_shape_type}}
+  		{{>field_radius}}
+  		{{>field_shape_opt}}
+  		
+  		{{#if shape_opt == 1}}
+  		{{>field_stroke}}
+  		{{/if}}
+  		
+  		{{>field_color}}
+  		{{>field_opacity}}
+  	</div>
+  	<div class="col-lg-6">
+  		{{#if shape_type == 2}}
+  		{{>field_sides}}
+  		{{/if}}
+  		{{>field_x_y}}
+  		{{#if shape_type == 1 || shape_type == 3}}
+  		{{>field_width_height}}
+  		{{/if}}
+  		{{>field_rotation}}
+  		{{>field_low_power}}
+  	</div>
+  </div>
+  <!-- {{/shapeEditor}} -->
+
+  <!-- {{>imageEditor}} -->
+  {{>field_image_selector}}
+  <div class="row">
+  	<div class="col-lg-6">
+  		{{>field_width_height}}
+  		{{>field_opacity}}
+  	</div>
+  	<div class="col-lg-6">
+  		{{>field_image_alignment}}
+  		{{>field_x_y}}
+  		{{>field_rotation}}
+  		{{>field_low_power}}
+  	</div>
+  </div>
+  <!-- {{/imageEditor}} -->
+
+  <!-- {{>field_text}} -->
+  <div class="form-group">
+  	<label class="control-label col-lg-3">Text</label>
+  	<div class="col-lg-9">
+  		<input class="form-control" value="{{text}}">
+  	</div>
+  </div>
+  <!-- {{/field_text}} -->
+
+  <!-- {{>field_text_alignment}} -->
+  <div class="form-group">
+  	<label class="control-label col-lg-3">Alignment</label>
+  	<div class="col-lg-9">
+  		<select class="form-control" type="number" value='{{alignment}}'>
+  			<option value="0">Left</option>
+  			<option value="1">Center</option>
+  			<option value="2">Right</option>
+  		</select>
+  	</div>
+  </div>
+  <!-- {{/field_text_alignment}} -->
+
+  <!-- {{>field_text_transform}} -->
+  <div class="form-group">
+  	<label class="control-label col-lg-3">Transform</label>
+  	<div class="col-lg-9">
+  		<select class="form-control" type="number" value='{{transform}}'>
+  			<option value='0'>None</option>
+  			<option value='1'>Uppercase</option>
+  			<option value='2'>Lowercase</option>
+  		</select>
+  	</div>
+  </div>
+  <!-- {{/field_text_transform}} -->
+
+  <!-- {{>field_size}} -->
+  <div class="form-group">
+  	<label class="control-label col-lg-3">Size</label>
+  	<div class="col-lg-9">
+  		<input class="form-control" value="{{size}}">
+  	</div>
+  </div>
+  <!-- {{/field_size}} -->
+
+  <!-- {{>field_font}} -->
+  <div class="form-group">
+  	<label class="control-label col-lg-3">Font</label>
+  	<div class="col-lg-9">
+  		<select class="form-control" value="{{font_hash}}">
+  			<option value="">No custom font</option>
+  			{{#each fonts}}
+  			<optgroup style="font-family: {{name}}" label="{{filename}}">
+  				<option value="{{filename}}">{{filename}}</option>
+  			</optgroup>
+  			{{/each}}
+  		</select>
+  	</div>
+  </div>
+  <!-- {{/field_font}} -->
+
+  <!-- {{>field_italic}} -->
+  <div class="form-group">
+  	<div class="col-lg-9 col-lg-push-3 checkbox">
+  		<label class="control-label">
+  			<input type="checkbox" checked="{{italic}}">
+  			Italics
+  		</label>
+  	</div>
+  </div>
+  <!-- {{/field_italic}} -->
+
+  <!-- {{>field_bold}} -->
+  <div class="form-group">
+  	<div class="col-lg-9 col-lg-push-3 checkbox">
+  		<label class="control-label">
+  			<input type="checkbox" checked="{{bold}}">
+  			Bold
+  		</label>
+  	</div>
+  </div>
+  <!-- {{/field_bold}} -->
+
+  <!-- {{>field_shape_type}} -->
+  <div class="form-group">
+  	<label class="control-label col-lg-3">Type</label>
+  	<div class="col-lg-9">
+  		<select value="{{shape_type}}" class="form-control">
+  			<option value="0">Circle</option>
+  			<option value="1">Square</option>
+  			<option value="2">Polygon</option>
+  			<option value="3">Line</option>
+  			<option value="4">Triangle</option>
+  		</select>
+  	</div>
+  </div>
+  <!-- {{/field_shape_type}} -->
+
+  <!-- {{>field_radius}} -->
+  <div class="form-group">
+  	<label class="control-label col-lg-3">Radius</label>
+  	<div class="col-lg-9">
+  		<input type="text" class="form-control" value="{{radius}}">
+  	</div>
+  </div>
+  <!-- {{/field_radius}} -->
+
+  <!-- {{>field_shape_opt}} -->
+  <div class="form-group">
+  	<label class="control-label col-lg-3">Fill</label>
+  	<div class="col-lg-9">
+  		<select class="form-control" value="{{shape_opt}}">
+  			<option value="0">Fill</option>
+  			<option value="1">Stroke</option>
+  		</select>
+  	</div>
+  </div>
+  <!-- {{/field_shape_opt}} -->
+
+  <!-- {{>field_stroke}} -->
+  <div class="form-group">
+  	<label class="control-label col-lg-3">Stroke</label>
+  	<div class="col-lg-9">
+  		<input type="text" class="form-control" value="{{stroke_size}}">
+  	</div>
+  </div>
+  <!-- {{/field_stroke}} -->
+
+  <!-- {{>field_color}} -->
+  <div class="form-group">
+  	<label class="control-label col-lg-4">Color</label>
+  	<div class="col-lg-8">
+  		<color argb="{{color}}" class="form-control"/>
+  	</div>
+  </div>
+  <!-- {{/field_color}} -->
+
+  <!-- {{>field_bgcolor}} -->
+  <div class="form-group">
+  	<label class="control-label col-lg-4">BG Color</label>
+  	<div class="col-lg-8">
+  		<color argb="{{bgcolor}}" class="form-control"/>
+  	</div>
+  </div>
+  <!-- {{/field_bgcolor}} -->
+
+  <!-- {{>field_low_power_color}} -->
+  <div class="form-group">
+  	<label class="control-label col-lg-4">Dim Color</label>
+  	<div class="col-lg-8">
+  		<color argb="{{low_power_color}}" class="form-control"/>
+  	</div>
+  </div>
+  <!-- {{/field_low_power_color}} -->
+
+  <!-- {{>field_sides}} -->
+  <div class="form-group">
+  	<label class="control-label col-lg-3">Sides</label>
+  	<div class="col-lg-9">
+  		<input type="text" value="{{sides}}" class="form-control">
+  	</div>
+  </div>
+  <!-- {{/field_sides}} -->
+
+  <!-- {{>field_image_selector}} -->
+  <div class="form-group">
+  	<label class="control-label col-lg-3">Image</label>
+  	<div class="col-lg-9">
+  		<div class="image-dropdown form-control">
+  			<div class="selected image-{{hash}}"></div>
+  			<div class="options">
+  				{{#each images:img_hash}}
+  				<label class="image-{{img_hash}}">
+  					<input type="radio" name="{{hash}}" value="{{img_hash}}">
+  				</label>
+  				{{/each}}
+  			</div>
+  		</div>
+  	</div>
+  </div>
+  <!-- {{/field_image_selector}} -->
+
+  <!-- {{>field_image_alignment}} -->
+  <div class="form-group">
+  	<label class="control-label col-lg-3">Alignment</label>
+  	<div class="col-lg-9">
+  		<select class="form-control" type="number" value='{{alignment}}'>
+  			<option value="0">Top Left</option>
+  			<option value="1">Top Center</option>
+  			<option value="2">Top Right</option>
+  			<option value="3">Center Left</option>
+  			<option value="4">Center</option>
+  			<option value="5">Center Right</option>
+  			<option value="6">Bottom Left</option>
+  			<option value="7">Bottom Center</option>
+  			<option value="8">Bottom Right</option>
+  		</select>
+  	</div>
+  </div>
+  <!-- {{/field_image_alignment}} -->
+
+  <!-- {{>field_low_power}} -->
+  <div class="form-group">
+  	<div class="col-lg-9 col-lg-push-3 checkbox">
+  		<label class="control-label">
+  			<input type="checkbox" checked="{{low_power}}">
+  			Display when Dimmed
+  		</label>
+  	</div>
+  </div>
+  <!-- {{/field_low_power}} -->
+
+  <!-- {{>field_x_y}} -->
+  <div class="form-group">
+  	<label class="control-label col-lg-3">X Pos</label>
+  	<div class="col-lg-9">
+  		<input class="form-control" value="{{x}}">
+  	</div>
+  </div>
+  <div class="form-group">
+  	<label class="control-label col-lg-3">Y Pos</label>
+  	<div class="col-lg-9">
+  		<input class="form-control" value="{{y}}">
+  	</div>
+  </div>
+  <!-- {{/field_x_y}} -->
+
+  <!-- {{>field_width_height}} -->
+  <div class="form-group">
+  	<label class="control-label col-lg-3">Width</label>
+  	<div class="col-lg-9">
+  		<input type="text" value="{{width}}" class="form-control">
+  	</div>
+  </div>
+  <div class="form-group">
+  	<label class="control-label col-lg-3">Height</label>
+  	<div class="col-lg-9">
+  		<input type="text" value="{{height}}" class="form-control">
+  	</div>
+  </div>
+  <!-- {{/field_width_height}} -->
+
+  <!-- {{>field_opacity}} -->
+  <div class="form-group">
+  	<label class="control-label col-lg-3">Opacity</label>
+  	<div class="col-lg-9">
+  		<input class="form-control" value="{{opacity}}">
+  	</div>
+  </div>
+  <!-- {{/field_opacity}} -->
+
+  <!-- {{>field_rotation}} -->
+  <div class="form-group">
+  	<label class="control-label col-lg-3">Rotation</label>
+  	<div class="col-lg-9">
+  		<input type="text" value="{{r}}" class="form-control">
+  	</div>
+  </div>
+  <!-- {{/field_rotation}} -->
+
+  
+  
+
+      <!-- Select Input
+      <div class="row">
+        <label class="control-label col-lg-3"></label>
+        <div class="col-lg-9">
+          <select class="form-control" type="number" value='{{}}'>
+          </select>
+        </div>
+      </div>
+  -->
+
+      <!-- Text Input
+      <div class="row">
+        <label class="control-label col-lg-3"></label>
+        <div class="col-lg-9">
+          <input class="form-control" value="{{}}">
+        </div>
+      </div>
+  -->
+      <!-- Checkbox
+      <div class="row">
+        <div class="col-lg-9 col-lg-push-3 checkbox">
+          <label class="control-label">
+            <input type="checkbox" checked="{{}}">
+          </label>
+        </div>
+      </div>
+      -->

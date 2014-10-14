@@ -51,25 +51,22 @@
   var m_names = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
     m_names_short = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"],
     conditional_regex = /\$([\d]+)([><]\=?)([\d]+)\?([\d\w]+):([\d\w]+)\$/g,
-    math_regex = /\(?([\d]+)([\+\-\*\/])([\d]+)\)?/g;
+    math_regex = /[\[\(]?([\d]+)([\+\-\*\/])([\d]+)[\]\)]?/g;
 
   FM.prototype.parse = function(input_str) {
     var fm = this,
-      val = input_str;
+      val = input_str,
+      old_val;
 
     //TODO: Do this WAAAAYYYY better. repeating works for now, but its ugly and stupid and hacky
     val = fm.replace_tags(val);
-    val = fm.calculate_math(val);
-    val = fm.calculate_conditionals(val);
-    val = fm.calculate_math(val);
-    val = fm.calculate_conditionals(val);
-    val = fm.calculate_math(val);
-    val = fm.calculate_conditionals(val);
-    val = fm.calculate_math(val);
-    val = fm.calculate_conditionals(val);
-    val = fm.calculate_math(val);
-    val = fm.calculate_conditionals(val);
-
+    
+    while(old_val !== val) {
+      old_val = val;
+      val = fm.calculate_math(val);
+      val = fm.calculate_conditionals(val);
+    }
+   
     return val;
   };
 

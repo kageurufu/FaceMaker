@@ -118,7 +118,7 @@
         //This is the default rendering position
         break;
     };
-
+    
     //For rotation, theres a fair amount that needs to be done
     //The easiest way, will be to save the canvas, translate,
     //  rotate, draw, and restore

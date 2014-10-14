@@ -26,7 +26,18 @@ var FaceMaker = (function() {
     }
   };
 
-  FM.CURRENT_FACER_VERSION = '0.90.11';
+  FM.FACER_VERSIONS = {
+    '0.90.1b': {
+      build_int: 49,
+      build: '0.90.1 beta 1'
+    },
+    '0.90.11': {
+      build_int: undefined,
+      build: '0.90.11'
+    }
+  };
+
+  FM.CURRENT_FACER_VERSION = FM.FACER_VERSIONS['0.90.11'];
 
   FM.ShapeTypes = {
     circle: 0,
@@ -82,10 +93,12 @@ var FaceMaker = (function() {
 
     this.face = {};
     this.face.description = {
-      id: new_id,
-      title: "Untitled Watchface",
-      build: CURRENT_FACER_VERSION
-    };
+        id: new_id,
+        title: "Untitled Watchface",
+        build: FM.CURRENT_FACER_VERSION.build,
+        build_tag: FM.CURRENT_FACER_VERSION.build_tag
+      };
+
     this.face.watchface = [];
 
     this.face.images = [];
