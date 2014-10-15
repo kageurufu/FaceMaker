@@ -136,7 +136,6 @@
       d = new Date();
     }
 
-    console.log(fm.use_test_date_time, d);
     if (FM.FormatTags.hasOwnProperty(match)) {
       try {
         return FM.FormatTags[match](d, fm._weather_data);
