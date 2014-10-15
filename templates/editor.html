@@ -14,8 +14,17 @@
   	{{#watchface:index}}
   	<div class="panel panel-default">
   		<div class="panel-heading">
-  			<button class="text-danger close" on-click="removeLayer">&times;</button>
-  			<a href="#editor-layer-{{index}}" data-toggle="collapse" data-parent="#editor-layers">
+        <button class="text-danger close" on-click="removeLayer">&times;</button>
+        {{#if index == watchface.length - 1}}
+        <span class="close" style="width: 25px;">&nbsp;</span>
+        {{/if}}
+        {{#if index != watchface.length - 1}}
+  			<button class="text-danger close" style="width: 25px;" on-click="moveLayerDown">▼</button>
+        {{/if}}
+        {{#if index != 0}}
+        <button class="text-danger close" style="width: 25px;" on-click="moveLayerUp">▲</button>
+        {{/if}}
+        <a href="#editor-layer-{{index}}" data-toggle="collapse" data-parent="#editor-layers">
   				<h4 class="panel-title">Layer {{id}} - {{type}}</h4>
   			</a>
   		</div>
@@ -26,7 +35,6 @@
   	</div>
   	{{/watchface}}
   </div>
-
 
   {{#images}}
   {{#each images:hash}}
