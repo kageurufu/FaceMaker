@@ -123,12 +123,20 @@
   };
 
   FM.prototype.replace_tags = function(input_str) {
-    return input_str.replace(/#(\w+)#/g, this.tags_replacer);
+    return input_str.replace(/#(\w+)#/g, this.tags_replacer.bind(this));
   };
 
   FM.prototype.tags_replacer = function(full_match, match) {
-    var d = new Date();
+    var fm = this,
+        d;
 
+    if(fm.use_test_date_time) {
+      d = fm.test_date_time;
+    } else {
+      d = new Date();
+    }
+
+    console.log(fm.use_test_date_time, d);
     if (FM.FormatTags.hasOwnProperty(match)) {
       try {
         return FM.FormatTags[match](d, fm._weather_data);
@@ -275,11 +283,11 @@
   });
 
   FM.AddFormatTag("DmoT", "Value for minute hand rotation", function(d, w) {
-    return d.getMinutes() * 5; // 360 / 60
+    return d.getMinutes() * 6; // 360 / 60
   });
 
   FM.AddFormatTag("DWFM", "Value for minute hand rotation (wearface image)", function(d, w) {
-    return d.getMinutes() * 5; // 360 / 60
+    return d.getMinutes() * 6; // 360 / 60
   });
 
   FM.AddFormatTag("DmT", "String value for minutes", function(d, w) {

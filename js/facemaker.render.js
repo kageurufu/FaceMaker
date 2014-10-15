@@ -27,8 +27,25 @@
 
     //For the moment, we use a 320px radius circle for clipping, per Moto 360
     c.save();
+
+
     c.beginPath();
-    c.arc(fm.canvas_width / 2, fm.canvas_height / 2, 160, 0, 2 * Math.PI);
+    
+    switch(fm.face_style) {
+      default:
+        fm.face_style = 'moto360';
+      case 'g_watch_r':
+      case 'moto360':
+        c.arc(fm.canvas_width / 2, fm.canvas_height / 2, 160, 0, 2 * Math.PI);
+        break;
+      case 'gear_live':
+        c.rect(0, 0, 320, 320);
+        break;
+      case 'g_watch':
+        c.rect(0, 0, 280, 280);
+        break;
+    }
+
     c.closePath();
     c.clip();
 
@@ -43,11 +60,15 @@
       }
     }
 
-    //Apply the clip, the mask off the rest of it
+    //Apply the clip, then mask off the rest of it for the moto
     c.restore();
 
-    c.fillStyle = "rgb(255,255,255)"
-    c.fillRect(0, 290, 320, 320);
+    switch(fm.face_style) {
+      case 'moto360':
+        c.fillStyle = "rgb(255,255,255)"
+        c.fillRect(0, 290, 320, 320);
+        break;
+    }
 
     requestAnimationFrame(fm.render.bind(this));
   };

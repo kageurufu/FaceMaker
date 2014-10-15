@@ -12,7 +12,6 @@
         async: false,
         dataType: 'html',
         success: function(data, status) {
-          console.log(data, status);
           if(status === 'success') {
             script_tag.innerHTML = data;
           }

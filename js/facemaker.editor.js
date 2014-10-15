@@ -98,7 +98,6 @@
       intObserv.bind(r)
     );
 
-
     return true;
   };
 

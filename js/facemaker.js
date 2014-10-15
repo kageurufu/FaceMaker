@@ -78,10 +78,53 @@ var FaceMaker = (function() {
     examples: []
   };
 
+  FM.prototype.init_test_options = function() {
+    var fm = this;
+
+    fm.face_style = 'moto360';
+    fm.use_test_date_time = false;
+    fm.test_low_power_mode = false;
+    fm.test_date_time = new Date();
+
+    $("#low_power_mode").click(this.toggle_low_power_mode.bind(this));
+    $("#fake_date_time").click(this.toggle_fake_date_time.bind(this));
+    $("#fake_date, #fake_time").change(this.update_fake_date_time.bind(this));
+    $("#face_style").change(this.change_face_style.bind(this));
+  };
+
   FM.prototype.init_buttons = function() {
     this.new_face_button.click(this.new_face.bind(this));
     this.download_face_button.click(this.download_face.bind(this));
-  }
+  };
+
+  FM.prototype.change_face_style = function(e) {
+    var fm = this;
+    console.log(e);
+
+    fm.face_style = e.target.value;
+  };
+  
+  FM.prototype.toggle_low_power_mode = function(e) {
+    var fm = this;
+    console.log(e);
+    fm.test_low_power_mode = e.target.checked;
+  };
+
+  FM.prototype.toggle_fake_date_time = function(e) {
+    var fm = this;
+    console.log(e);
+
+    fm.use_test_date_time = e.target.checked;
+  };
+
+  FM.prototype.update_fake_date_time = function(e) {
+    var fm = this,
+        fake_date = $("#fake_date").val(),
+        fake_time = $("#fake_time").val();
+    console.log(e);
+
+    fm.test_date_time = new Date(fake_date + " " + fake_time);
+  };  
 
   FM.prototype.new_face = function() {
     this.rendering = false;
@@ -107,11 +150,11 @@ var FaceMaker = (function() {
     this.rendering = true;
     this.render();
     this.init_editor();
-  }
+  };
 
   FM.prototype.download_face = function() {
     this.download_zip_file();
-  }
+  };
 
   FM.prototype._parseColor = function(color_str, opacity) {
     var color = parseInt(color_str),
