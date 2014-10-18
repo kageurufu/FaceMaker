@@ -1,11 +1,9 @@
-#preview {
-	color: black;
-	background-color: black;
+#preview canvas {
   width: 100%;
 }
 
 @media(min-width: 768) {
-  #preview {
+  #preview canvas {
     width: 400px;
   }
 }

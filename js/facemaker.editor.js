@@ -109,6 +109,32 @@
     console.log(this);
   };
 
+  FM.prototype.add_font_file = function(font_file) {
+    var fm = this,
+        r = fm.editor.ractive,
+        hash = null,
+        font = {};
+
+    font.name = family_name;
+    font.filename = font_name;
+    font.file = file;
+    font.data = data;
+
+    r.set("face.fonts." + font.name, font);
+  };
+
+  FM.prototype.add_image_file = function(image_file) {
+    var fm = this,
+        r = fm.editor.ractive,
+        hash = null,
+        image = {
+          file: image_file,
+        };
+
+    r.set("face.images." + hash, image);
+  };
+
+
   FM.BLANK_SHAPE = {
     "color": "-1",
     "id": 0,

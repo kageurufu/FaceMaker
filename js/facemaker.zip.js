@@ -128,9 +128,7 @@
 
     fm._handle_zip(zip);
 
-    fm.rendering = true;
-    requestAnimationFrame(fm.render.bind(fm));
-
+    fm.renderer.start_rendering();
     fm.reload_editor();
   }
 

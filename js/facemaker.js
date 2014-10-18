@@ -14,16 +14,23 @@ var FaceMaker = (function() {
     this.new_face_button = $(this.options.new_face);
     this.download_face_button = $(this.options.download_face);
 
-    this.preview = $(this.options.preview)[0];
-
     this.face = null;
-    this.rendering = false;
 
     for (var i in this) {
       if (i.indexOf("init_") == 0 && typeof(this[i]) == 'function') {
         this[i].bind(this)();
       }
     }
+
+    this.renderer = new FM.Renderer(this);
+  };
+
+  FM.prototype.defaults = {
+    editor: '#editor',
+    preview: '#preview',
+    new_face: "#new_face",
+    download_face: "#download_face",
+    examples: []
   };
 
   FM.FACER_VERSIONS = {
@@ -70,14 +77,6 @@ var FaceMaker = (function() {
     lowercase: 2
   };
 
-  FM.prototype.defaults = {
-    editor: '#editor',
-    preview: 'canvas#preview',
-    new_face: "#new_face",
-    download_face: "#download_face",
-    examples: []
-  };
-
   FM.prototype.init_test_options = function() {
     var fm = this;
 
@@ -99,20 +98,18 @@ var FaceMaker = (function() {
 
   FM.prototype.change_face_style = function(e) {
     var fm = this;
-    console.log(e);
 
     fm.face_style = e.target.value;
   };
   
   FM.prototype.toggle_low_power_mode = function(e) {
     var fm = this;
-    console.log(e);
+
     fm.test_low_power_mode = e.target.checked;
   };
 
   FM.prototype.toggle_fake_date_time = function(e) {
     var fm = this;
-    console.log(e);
 
     fm.use_test_date_time = e.target.checked;
   };
@@ -121,7 +118,6 @@ var FaceMaker = (function() {
     var fm = this,
         fake_date = $("#fake_date").val(),
         fake_time = $("#fake_time").val();
-    console.log(e);
 
     fm.test_date_time = new Date(fake_date + " " + fake_time);
   };  

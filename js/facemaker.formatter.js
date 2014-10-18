@@ -317,6 +317,10 @@
     return d.getSeconds() * 6;
   });
 
+  FM.AddFormatTag("DWFSS", "Smooth Rotation value for second hand (wearface image)", function(d, w) {
+    return (d.getSeconds() + (d.getMilliseconds() / 1000)) * 6;
+  });
+
   FM.AddFormatTag("Dz", "Timezone", function(d, w) {
     return 'MST'; //Unimplemented
   });
