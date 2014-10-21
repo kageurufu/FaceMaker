@@ -89,6 +89,7 @@ var FaceMaker = (function() {
     $("#fake_date_time").click(this.toggle_fake_date_time.bind(this));
     $("#fake_date, #fake_time").change(this.update_fake_date_time.bind(this));
     $("#face_style").change(this.change_face_style.bind(this));
+    $("#battery").change(this.update_battery.bind(this));
   };
 
   FM.prototype.init_buttons = function() {
@@ -122,8 +123,16 @@ var FaceMaker = (function() {
     fm.test_date_time = new Date(fake_date + " " + fake_time);
   };  
 
+  FM.prototype.update_battery = function(e) {
+    var fm = this;
+
+    fm.battery = e.target.value;
+  };
+
   FM.prototype.new_face = function() {
-    this.rendering = false;
+    var fm = this;
+
+    fm.renderer.stop_rendering();
 
     var new_id;
 
@@ -143,8 +152,7 @@ var FaceMaker = (function() {
     this.face.images = [];
     this.face.fonts = [];
 
-    this.rendering = true;
-    this.render();
+    this.renderer.start_rendering();
     this.init_editor();
   };
 

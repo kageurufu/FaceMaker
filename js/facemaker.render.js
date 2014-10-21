@@ -218,7 +218,7 @@
       c.fillStyle = fm._parseColor(layer.color, layer.opacity);
     }
 
-    c.lineWidth = parseInt(layer.stroke_size) / 2;
+    c.lineWidth = fm.parseInt(layer.stroke_size) / 2;
 
     switch (layer.shape_type) {
       case FM.ShapeTypes.circle:
@@ -238,9 +238,9 @@
       case FM.ShapeTypes.line:
         //As far as I can tell, a line is just a rect, and a square is really a rect
         if (layer.shape_opt === 0) {
-          c.fillRect(x, y, parseInt(layer.width), parseInt(layer.height));
+          c.fillRect(x, y, fm.parseInt(layer.width), fm.parseInt(layer.height));
         } else {
-          c.strokeRect(x, y, parseInt(layer.width), parseInt(layer.height));
+          c.strokeRect(x, y, fm.parseInt(layer.width), fm.parseInt(layer.height));
         }
         break;
 
@@ -319,6 +319,12 @@
 
     c.restore();
   };
+
+  R.prototype._create_preview_image = function() {
+    var r = this;
+
+    return r.canvas.toDataURL().split(",")[1];
+  }
 
   FM.Renderer = R;
 })(FaceMaker);

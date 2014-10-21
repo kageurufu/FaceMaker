@@ -51,7 +51,7 @@
   var m_names = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
     m_names_short = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"],
     conditional_regex = /\$([\d]+)([><]\=?)([\d]+)\?([\d\w]+):([\d\w]+)\$/g,
-    math_regex = /[\[\(]?([\d]+)([\+\-\*\/])([\d]+)[\]\)]?/g;
+    math_regex = /[\[\(]?([\d\.]+)([\+\-\*\/])([\d\.]+)[\]\)]?/g;
 
   FM.prototype.parse = function(input_str) {
     var fm = this,
@@ -83,8 +83,8 @@
 
     return input_str.replace(math_regex,
       function(match, val1, op, val2) {
-        val1 = parseInt(val1);
-        val2 = parseInt(val2);
+        val1 = parseFloat(val1);
+        val2 = parseFloat(val2);
 
         switch (op) {
           case '+':
@@ -138,7 +138,7 @@
 
     if (FM.FormatTags.hasOwnProperty(match)) {
       try {
-        return FM.FormatTags[match](d, fm._weather_data);
+        return FM.FormatTags[match](fm, d, fm._weather_data);
       } catch(e) {
         console.log(e);
         return 'ERROR';
@@ -156,357 +156,377 @@
     func.description = description;
   }
 
-  FM.AddFormatTag("Dy", "Year", function(d, w) {
+  FM.AddFormatTag("Dy", "Year", function(fm, d, w) {
     return d.format("Y");
   });
 
-  FM.AddFormatTag("Dyy", "Short Year", function(d, w) {
+  FM.AddFormatTag("Dyy", "Short Year", function(fm, d, w) {
     return d.format("y");
   });
 
-  FM.AddFormatTag("Dyyy", "Year", function(d, w) {
+  FM.AddFormatTag("Dyyy", "Year", function(fm, d, w) {
     return d.format("Y");
   });
 
-  FM.AddFormatTag("DM", "Month in Year (Numeric)", function(d, w) {
+  FM.AddFormatTag("DM", "Month in Year (Numeric)", function(fm, d, w) {
     return d.format("n");
   });
 
-  FM.AddFormatTag("DMM", "Month in Year (Numeric)", function(d, w) {
+  FM.AddFormatTag("DMM", "Month in Year (Numeric)", function(fm, d, w) {
     return d.format("m");
   });
 
-  FM.AddFormatTag("DMMM", "Month in Year (Short String)", function(d, w) {
+  FM.AddFormatTag("DMMM", "Month in Year (Short String)", function(fm, d, w) {
     return d.format("M");
   });
 
-  FM.AddFormatTag("DMMMM", "Month in Year (String)", function(d, w) {
+  FM.AddFormatTag("DMMMM", "Month in Year (String)", function(fm, d, w) {
     return d.format("F");
   });
 
-  FM.AddFormatTag("DW", "Week in Month", function(d, w) {
+  FM.AddFormatTag("DW", "Week in Month", function(fm, d, w) {
     return (0 | d.getDate() / 7) + 1;
   });
 
-  FM.AddFormatTag("Dw", "Week in Year", function(d, w) {
+  FM.AddFormatTag("Dw", "Week in Year", function(fm, d, w) {
     return d.format("W");
   });
 
-  FM.AddFormatTag("DD", "Day in Year ", function(d, w) {
+  FM.AddFormatTag("DD", "Day in Year ", function(fm, d, w) {
     return d.format("z");
   });
 
-  FM.AddFormatTag("Dd", "Day in Month ", function(d, w) {
+  FM.AddFormatTag("Dd", "Day in Month ", function(fm, d, w) {
     return d.format("w");
   });
 
-  FM.AddFormatTag("DE", "Day of Week ", function(d, w) {
+  FM.AddFormatTag("DE", "Day of Week ", function(fm, d, w) {
     return d.format("D");
   });
 
-  FM.AddFormatTag("DEEEE", "Day of Week ", function(d, w) {
+  FM.AddFormatTag("DEEEE", "Day of Week ", function(fm, d, w) {
     return d.format("I");
   });
 
-  FM.AddFormatTag("DF", "Day of Week in Month", function(d, w) {
+  FM.AddFormatTag("DF", "Day of Week in Month", function(fm, d, w) {
     return 3; //UNIMPLEMENTED
   });
 
-  FM.AddFormatTag("Da", "AM/PM", function(d, w) {
+  FM.AddFormatTag("Da", "AM/PM", function(fm, d, w) {
     return d.format("A");
   });
 
-  FM.AddFormatTag("Dh", "Hour in Day (1-12)", function(d, w) {
+  FM.AddFormatTag("Dh", "Hour in Day (1-12)", function(fm, d, w) {
     return d.format("g");
   });
 
-  FM.AddFormatTag("Dk", "Hour in Day (1-24)", function(d, w) {
+  FM.AddFormatTag("Dk", "Hour in Day (1-24)", function(fm, d, w) {
     return d.format("h");
   });
 
-  FM.AddFormatTag("DH", "Hour in Day (0-23)", function(d, w) {
+  FM.AddFormatTag("DH", "Hour in Day (0-23)", function(fm, d, w) {
     return d.format("H");
   });
 
-  FM.AddFormatTag("DK", "Hour in Day (0-11)", function(d, w) {
+  FM.AddFormatTag("DK", "Hour in Day (0-11)", function(fm, d, w) {
     return d.format("h");
   });
 
-  FM.AddFormatTag("DHZ", "Hour in Day (leading zero) (00-23)", function(d, w) {
+  FM.AddFormatTag("DHZ", "Hour in Day (leading zero) (00-23)", function(fm, d, w) {
     return d.format("G");
   });
 
-  FM.AddFormatTag("DkZ", "Hour in Day (leading zero) (01-24)", function(d, w) {
+  FM.AddFormatTag("DkZ", "Hour in Day (leading zero) (01-24)", function(fm, d, w) {
     return d.format("G"); //TODO: Implement
   });
 
-  FM.AddFormatTag("DKZ", "Hour in Day (12 hour, leading zero) (00-11)", function(d, w) {
+  FM.AddFormatTag("DKZ", "Hour in Day (12 hour, leading zero) (00-11)", function(fm, d, w) {
     return d.format("h");
   });
 
-  FM.AddFormatTag("DhZ", "Hour in Day (12 hour, leading zero) (01-12)", function(d, w) {
+  FM.AddFormatTag("DhZ", "Hour in Day (12 hour, leading zero) (01-12)", function(fm, d, w) {
     return d.format("h");
   });
 
-  FM.AddFormatTag("DhoT", "Value for Hour Rotation (12 hour)", function(d, w) {
+  FM.AddFormatTag("DhoT", "Value for Hour Rotation (12 hour)", function(fm, d, w) {
     return d.getHours() * 30; // 360 / 12
   });
 
-  FM.AddFormatTag("DhoTb", "Value for Hour Rotation (24 hour)", function(d, w) {
+  FM.AddFormatTag("DhoTb", "Value for Hour Rotation (24 hour)", function(fm, d, w) {
     return d.getHours() * 15; // 360 / 24
   });
 
-  FM.AddFormatTag("DWFK", "Value for Hour Rotation (12 hour, wearface)", function(d, w) {
+  FM.AddFormatTag("DWFK", "Value for Hour Rotation (12 hour, wearface)", function(fm, d, w) {
     return d.getHours() * 30; // 360 / 12
   });
 
-  FM.AddFormatTag("DWFH", "Value for Hour Rotation (24 hour, wearface)", function(d, w) {
+  FM.AddFormatTag("DWFH", "Value for Hour Rotation (24 hour, wearface)", function(fm, d, w) {
     return d.getHours() * 15; // 360 / 24
+  });
+
+  FM.AddFormatTag("DWFKS", "Smooth Value for Hour Rotation (12 hour, wearface)", function(fm, d, w) {
+    return (d.getHours() * 30) + (d.getMinutes() * 0.50); // 360 / 12
+  });
+
+  FM.AddFormatTag("DWFHS", "Smooth Value for Hour Rotation (24 hour, wearface)", function(fm, d, w) {
+    return (d.getHours() * 15) + (d.getMinutes() * 0.25); // 360 / 24
   });
 
   //String Values, how should I handle this?
-  FM.AddFormatTag("DhT", "String value for hour (12 hour)", function(d, w) {
+  FM.AddFormatTag("DhT", "String value for hour (12 hour)", function(fm, d, w) {
     return toWords((d.getHours() - 1) % 12);
   });
 
-  FM.AddFormatTag("DkT", "String value for hour (24 hour)", function(d, w) {
+  FM.AddFormatTag("DkT", "String value for hour (24 hour)", function(fm, d, w) {
     return toWords(d.getHours());
   });
 
-  FM.AddFormatTag("Dm", "Minute in Hour", function(d, w) {
+  FM.AddFormatTag("Dm", "Minute in Hour", function(fm, d, w) {
     return d.getMinutes();
   });
 
-  FM.AddFormatTag("DmZ", "Minute in Hour (leading zero)", function(d, w) {
+  FM.AddFormatTag("DmZ", "Minute in Hour (leading zero)", function(fm, d, w) {
     return FM.pad("" + d.getMinutes(), 2);
   });
 
-  FM.AddFormatTag("DmoT", "Value for minute hand rotation", function(d, w) {
+  FM.AddFormatTag("DmoT", "Value for minute hand rotation", function(fm, d, w) {
     return d.getMinutes() * 6; // 360 / 60
   });
 
-  FM.AddFormatTag("DWFM", "Value for minute hand rotation (wearface image)", function(d, w) {
+  FM.AddFormatTag("DWFM", "Value for minute hand rotation (wearface image)", function(fm, d, w) {
     return d.getMinutes() * 6; // 360 / 60
   });
 
-  FM.AddFormatTag("DmT", "String value for minutes", function(d, w) {
+  FM.AddFormatTag("DmT", "String value for minutes", function(fm, d, w) {
     return toWords(d.getMinutes());
   });
 
-  FM.AddFormatTag("DmMT", "String value for minutes (tens place)", function(d, w) {
+  FM.AddFormatTag("DmMT", "String value for minutes (tens place)", function(fm, d, w) {
     return toWords(Math.floor(d.getMinutes() / 10) * 10); // floor(45 / 10) * 10 = 40
   });
 
-  FM.AddFormatTag("DmST", "String value for minutes (ones place)", function(d, w) {
+  FM.AddFormatTag("DmST", "String value for minutes (ones place)", function(fm, d, w) {
     return toWords(d.getMinutes() % 10);
   });
 
-  FM.AddFormatTag("Ds", "Second in minute", function(d, w) {
+  FM.AddFormatTag("Ds", "Second in minute", function(fm, d, w) {
     return d.getSeconds();
   });
 
-  FM.AddFormatTag("DsZ", "Second in minute (leading zero)", function(d, w) {
+  FM.AddFormatTag("DsZ", "Second in minute (leading zero)", function(fm, d, w) {
     return FM.pad(d.getSeconds(), 2);
   });
 
-  FM.AddFormatTag("DseT", "Value for second hand rotation", function(d, w) {
+  FM.AddFormatTag("DseT", "Value for second hand rotation", function(fm, d, w) {
     return d.getSeconds() * 6;
   });
 
-  FM.AddFormatTag("DWFS", "Rotation value for second hand (wearface image)", function(d, w) {
+  FM.AddFormatTag("DWFS", "Rotation value for second hand (wearface image)", function(fm, d, w) {
     return d.getSeconds() * 6;
   });
 
-  FM.AddFormatTag("DWFSS", "Smooth Rotation value for second hand (wearface image)", function(d, w) {
+  FM.AddFormatTag("DWFSS", "Smooth Rotation value for second hand (wearface image)", function(fm, d, w) {
     return (d.getSeconds() + (d.getMilliseconds() / 1000)) * 6;
   });
 
-  FM.AddFormatTag("Dz", "Timezone", function(d, w) {
+  FM.AddFormatTag("Dz", "Timezone", function(fm, d, w) {
     return 'MST'; //Unimplemented
   });
 
-  FM.AddFormatTag("Dzzzz", "Timezone", function(d, w) {
+  FM.AddFormatTag("Dzzzz", "Timezone", function(fm, d, w) {
     return "Mountain Standard Time"; // Unimplemented
   });
 
-  FM.AddFormatTag("BLP", "Battery Level Percentage", function(d, w) {
-    return "95%"; // Unimplemented
+  FM.AddFormatTag("BLP", "Battery Level Percentage", function(fm, d, w) {
+    return $("#battery").val() + "%"; // Unimplemented
   });
 
-  FM.AddFormatTag("BLN", "Battery Level Integer", function(d, w) {
-    return 95; // Unimplemented
+  FM.AddFormatTag("BLN", "Battery Level Integer", function(fm, d, w) {
+    return $("#battery").val(); // Unimplemented
   });
 
-  FM.AddFormatTag("BTC", "Battery Temperature (°C)", function(d, w) {
+  FM.AddFormatTag("BTC", "Battery Temperature (°C)", function(fm, d, w) {
     return "31°C"; // Unimplemented
   });
 
-  FM.AddFormatTag("BTI", "Battery Temperature (°F)", function(d, w) {
+  FM.AddFormatTag("BTI", "Battery Temperature (°F)", function(fm, d, w) {
     return "88°F"; // Unimplemented
   });
 
-  FM.AddFormatTag("BTCN", "Battery Temperature (Celcius)", function(d, w) {
+  FM.AddFormatTag("BTCN", "Battery Temperature (Celcius)", function(fm, d, w) {
     return "31"; // Unimplemented
   });
 
-  FM.AddFormatTag("BTIN", "Battery Temperature (Fahrenheit)", function(d, w) {
+  FM.AddFormatTag("BTIN", "Battery Temperature (Fahrenheit)", function(fm, d, w) {
     return "88"; // Unimplemented
   });
 
-  FM.AddFormatTag("BS", "Battery Charging Status", function(d, w) {
+  FM.AddFormatTag("BS", "Battery Charging Status", function(fm, d, w) {
     return "Charging"; // Unimplemented
   });
 
-  FM.AddFormatTag("ZLP", "Low Power Mode", function(d, w) {
-    return "false"; // Unimplemented
+  FM.AddFormatTag("ZLP", "Low Power Mode", function(fm, d, w) {
+    return "" + fm.test_low_power_mode; // Unimplemented
   });
 
-  FM.AddFormatTag("ZSC", "Step Count (may not be accurate)", function(d, w) {
+  FM.AddFormatTag("ZSC", "Step Count (may not be accurate)", function(fm, d, w) {
     return "0"; // Unimplemented
   });
 
-  FM.AddFormatTag("WLC", "Weather Location", function(d, w) {
-    return w.city.name;
+  FM.AddFormatTag("WM", "Weather Units (F/M)", function(fm, d, w) {
+    return w.units.temperature;
   });
 
-  FM.AddFormatTag("WTH", "Today's High", function(d, w) {
-    return w.list[0].temp.max;
+  FM.AddFormatTag("WLC", "Weather Location", function(fm, d, w) {
+    return w.location.city;
   });
 
-  FM.AddFormatTag("WTL", "Todays' Low", function(d, w) {
-    return w.list[0].temp.min;
+  FM.AddFormatTag("WTH", "Today's High", function(fm, d, w) {
+    return w.list[0].high;
   });
 
-  FM.AddFormatTag("WCT", "Current Temp", function(d, w) {
-    return w.list[0].temp.day;
+  FM.AddFormatTag("WTL", "Todays' Low", function(fm, d, w) {
+    return w.list[0].low;
   });
 
-  FM.AddFormatTag("WCCI", "Current Condition Icon", function(d, w) {
-    return w.list[0].weather[0].icon;
+  FM.AddFormatTag("WCT", "Current Temp", function(fm, d, w) {
+    return w.current.temp;
   });
 
-  FM.AddFormatTag("WCCT", "Current Condition Text", function(d, w) {
-    return w.list[0].weather[0].main;
+  FM.AddFormatTag("WCCI", "Current Condition Icon", function(fm, d, w) {
+    return w.current.code;
   });
 
-  FM.AddFormatTag("WCHN", "Current Humidity Number", function(d, w) {
-    return w.list[0].humidity;
+  FM.AddFormatTag("WCCT", "Current Condition Text", function(fm, d, w) {
+    return w.current.text;
   });
 
-  FM.AddFormatTag("WCHP", "Current Humidity Percentage", function(d, w) {
-    return w.list[0].humidity + "%";
+  FM.AddFormatTag("WCHN", "Current Humidity Number", function(fm, d, w) {
+    return w.atmosphere.humidity;
   });
 
-  FM.AddFormatTag("WFAH", "Forecast Day 1 High", function(d, w) {
-    return w.list[1].temp.max;
+  FM.AddFormatTag("WCHP", "Current Humidity Percentage", function(fm, d, w) {
+    return w.atmosphere.humidity + "%";
   });
 
-  FM.AddFormatTag("WFAL", "Forecast Day 1 Low", function(d, w) {
-    return w.list[1].temp.min;
+  FM.AddFormatTag("WSUNRISE", "Time of sunrise", function(fm, d, w) {
+    return w.astronomy.sunrise;
   });
 
-  FM.AddFormatTag("WFACT", "Forecast Day 1 Condition Text", function(d, w) {
-    return w.list[1].weather[0].main;
+  FM.AddFormatTag("WSUNSET", "Time of sunset", function(fm, d, w) {
+    return w.astronomy.sunset;
   });
 
-  FM.AddFormatTag("WFACI", "Forecast Day 1 Condition Icon", function(d, w) {
-    return w.list[1].weather[0].icon;
+  FM.AddFormatTag("WFAH", "Forecast Day 1 High", function(fm, d, w) {
+    return w.list[1].high;
   });
 
-  FM.AddFormatTag("WFBH", "Forecast Day 2 High", function(d, w) {
-    return w.list[2].temp.max;
+  FM.AddFormatTag("WFAL", "Forecast Day 1 Low", function(fm, d, w) {
+    return w.list[1].low;
   });
 
-  FM.AddFormatTag("WFBL", "Forecast Day 2 Low", function(d, w) {
-    return w.list[2].temp.min;
+  FM.AddFormatTag("WFACT", "Forecast Day 1 Condition Text", function(fm, d, w) {
+    return w.list[1].text;
   });
 
-  FM.AddFormatTag("WFBCT", "Forecast Day 2 Condition Text", function(d, w) {
-    return w.list[2].weather[0].main;
+  FM.AddFormatTag("WFACI", "Forecast Day 1 Condition Icon", function(fm, d, w) {
+    return w.list[1].code;
   });
 
-  FM.AddFormatTag("WFBCI", "Forecast Day 2 Condition Icon", function(d, w) {
-    return w.list[2].weather[0].icon;
+  FM.AddFormatTag("WFBH", "Forecast Day 2 High", function(fm, d, w) {
+    return w.list[2].high;
   });
 
-  FM.AddFormatTag("WFCH", "Forecast Day 3 High", function(d, w) {
-    return w.list[3].temp.max;
+  FM.AddFormatTag("WFBL", "Forecast Day 2 Low", function(fm, d, w) {
+    return w.list[2].low;
   });
 
-  FM.AddFormatTag("WFCL", "Forecast Day 3 Low", function(d, w) {
-    return w.list[3].temp.min;
+  FM.AddFormatTag("WFBCT", "Forecast Day 2 Condition Text", function(fm, d, w) {
+    return w.list[2].text;
   });
 
-  FM.AddFormatTag("WFCCT", "Forecast Day 3 Condition Text", function(d, w) {
-    return w.list[3].weather[0].main;
+  FM.AddFormatTag("WFBCI", "Forecast Day 2 Condition Icon", function(fm, d, w) {
+    return w.list[2].code;
   });
 
-  FM.AddFormatTag("WFCCI", "Forecast Day 3 Condition Icon", function(d, w) {
-    return w.list[3].weather[0].icon;
+  FM.AddFormatTag("WFCH", "Forecast Day 3 High", function(fm, d, w) {
+    return w.list[3].high;
   });
 
-  FM.AddFormatTag("WFDH", "Forecast Day 4 High", function(d, w) {
-    return w.list[4].temp.max;
+  FM.AddFormatTag("WFCL", "Forecast Day 3 Low", function(fm, d, w) {
+    return w.list[3].low;
   });
 
-  FM.AddFormatTag("WFDL", "Forecast Day 4 Low", function(d, w) {
-    return w.list[4].temp.min;
+  FM.AddFormatTag("WFCCT", "Forecast Day 3 Condition Text", function(fm, d, w) {
+    return w.list[3].text;
   });
 
-  FM.AddFormatTag("WFDCT", "Forecast Day 4 Condition Text", function(d, w) {
-    return w.list[4].weather[0].main;
+  FM.AddFormatTag("WFCCI", "Forecast Day 3 Condition Icon", function(fm, d, w) {
+    return w.list[3].code;
   });
 
-  FM.AddFormatTag("WFDCI", "Forecast Day 4 Condition Icon", function(d, w) {
-    return w.list[4].weather[0].icon;
+  FM.AddFormatTag("WFDH", "Forecast Day 4 High", function(fm, d, w) {
+    return w.list[4].high;
   });
 
-  FM.AddFormatTag("WFEH", "Forecast Day 5 High", function(d, w) {
-    return w.list[5].temp.max;
+  FM.AddFormatTag("WFDL", "Forecast Day 4 Low", function(fm, d, w) {
+    return w.list[4].low;
   });
 
-  FM.AddFormatTag("WFEL", "Forecast Day 5 Low", function(d, w) {
-    return w.list[5].temp.min;
+  FM.AddFormatTag("WFDCT", "Forecast Day 4 Condition Text", function(fm, d, w) {
+    return w.list[4].text;
   });
 
-  FM.AddFormatTag("WFECT", "Forecast Day 5 Condition Text", function(d, w) {
-    return w.list[5].weather[0].main;
+  FM.AddFormatTag("WFDCI", "Forecast Day 4 Condition Icon", function(fm, d, w) {
+    return w.list[4].code;
   });
 
-  FM.AddFormatTag("WFECI", "Forecast Day 5 Condition Icon", function(d, w) {
-    return w.list[5].weather[0].icon;
+  FM.AddFormatTag("WFEH", "Forecast Day 5 High", function(fm, d, w) {
+    return w.list[5].high;
   });
 
-  FM.AddFormatTag("WFFH", "Forecast Day 6 High", function(d, w) {
-    return w.list[6].temp.max;
+  FM.AddFormatTag("WFEL", "Forecast Day 5 Low", function(fm, d, w) {
+    return w.list[5].low;
   });
 
-  FM.AddFormatTag("WFFL", "Forecast Day 6 Low", function(d, w) {
-    return w.list[6].temp.min;
+  FM.AddFormatTag("WFECT", "Forecast Day 5 Condition Text", function(fm, d, w) {
+    return w.list[5].text;
   });
 
-  FM.AddFormatTag("WFFCT", "Forecast Day 6 Condition Text", function(d, w) {
-    return w.list[6].weather[0].main;
+  FM.AddFormatTag("WFECI", "Forecast Day 5 Condition Icon", function(fm, d, w) {
+    return w.list[5].code;
   });
 
-  FM.AddFormatTag("WFFCI", "Forecast Day 6 Condition Icon", function(d, w) {
-    return w.list[6].weather[0].icon;
+  FM.AddFormatTag("WFFH", "Forecast Day 6 High", function(fm, d, w) {
+    return "";
   });
 
-  FM.AddFormatTag("WFGH", "Forecast Day 7 High", function(d, w) {
-    return w.list[7].temp.max;
+  FM.AddFormatTag("WFFL", "Forecast Day 6 Low", function(fm, d, w) {
+    return "";
   });
 
-  FM.AddFormatTag("WFGL", "Forecast Day 7 Low", function(d, w) {
-    return w.list[7].temp.min;
+  FM.AddFormatTag("WFFCT", "Forecast Day 6 Condition Text", function(fm, d, w) {
+    return "";
   });
 
-  FM.AddFormatTag("WFGCT", "Forecast Day 7 Condition Text", function(d, w) {
-    return w.list[7].weather[0].main;
+  FM.AddFormatTag("WFFCI", "Forecast Day 6 Condition Icon", function(fm, d, w) {
+    return "";
   });
 
-  FM.AddFormatTag("WFGCI", "Forecast Day 7 Condition Icon", function(d, w) {
-    return w.list[7].weather[0].icon;
+  FM.AddFormatTag("WFGH", "Forecast Day 7 High", function(fm, d, w) {
+    return "";
+  });
+
+  FM.AddFormatTag("WFGL", "Forecast Day 7 Low", function(fm, d, w) {
+    return "";
+  });
+
+  FM.AddFormatTag("WFGCT", "Forecast Day 7 Condition Text", function(fm, d, w) {
+    return "";
+  });
+
+  FM.AddFormatTag("WFGCI", "Forecast Day 7 Condition Icon", function(fm, d, w) {
+    return "";
   });
 
 
@@ -542,10 +562,16 @@
   };
 
   FM.makeWeatherURL = function(coords) {
-    var units = "imperial";
-
-    return "http://api.openweathermap.org/data/2.5/forecast/daily?units=" + units + "&lat=" +
-      coords.latitude + "&lon=" + coords.longitude;
+    //Now with 100% more yahoo, to match Facer
+    var API = "https://query.yahooapis.com/v1/public/yql?format=json&q=",
+        YQL = "SELECT * FROM weather.forecast" + 
+              "  WHERE woeid IN " +
+              "    (SELECT woeid FROM geo.placefinder " + 
+              "       WHERE text=\"" + coords.latitude + "," + coords.longitude + "\" AND gflags=\"R\"" +
+              "    );",
+        url = API + encodeURIComponent(YQL);
+  
+    return url;
   }
 
   FM.prototype.UpdateWeather = function() {
@@ -555,7 +581,20 @@
     $.getJSON(url, fm.HandleWeatherResponse.bind(fm));
   };
 
-  FM.prototype.HandleWeatherResponse = function(data, status) {
+  FM.prototype.HandleWeatherResponse = function(results, status) {
+    var res = results.query.results.channel,
+        data = {};
+
+    data.forecast = res.item.forecast;
+    data.astronomy = res.astronomy;
+    data.current = res.item.condition;
+    data.atmosphere = res.atmosphere;
+    data.wind = res.wind;
+    data.units = res.units;
+    data.location = res.location;
+
+    console.log(res);
+
     fm._weather_data = data;
   };
 

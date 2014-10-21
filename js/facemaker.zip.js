@@ -31,7 +31,7 @@
     //Export the data
     zip.file("watchface.json", JSON.stringify(fm.face.watchface));
     zip.file("description.json", JSON.stringify(fm.face.description));
-    zip.file("preview.png", fm._create_preview_image(), {base64: true});
+    zip.file("preview.png", fm.renderer._create_preview_image(), {base64: true});
 
     return zip;
   };
