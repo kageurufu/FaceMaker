@@ -218,8 +218,9 @@
       reader.onload = function(f) {
         fm.load_face(f.target.result);
         e.target.removeAttribute("disabled");
-        $("#load_modal").modal("hide")
         $("#file_loading").hide();
+        $("#load_modal").modal("hide");
+        $("#load_file").val("");
       }
 
       reader.readAsArrayBuffer(file);
@@ -246,11 +247,11 @@
       $("#file_loading").show();
 
       reader.onload = function(f) {
-        console.log(f);
-
         fm.load_face(f.target.result);
+
         $("#file_loading").hide();
         $("#load_modal").modal("hide");
+        $("#load_file").val("");
       }
 
       reader.readAsArrayBuffer(file);
