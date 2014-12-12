@@ -50,77 +50,101 @@
 
   var m_names = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
     m_names_short = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"],
-    conditional_regex = /\$([\d]+)([><]\=?)([\d]+)\?([\d\w]+):([\d\w]+)\$/g,
-    math_regex = /[\[\(]?([\d\.]+)([\+\-\*\/])([\d\.]+)[\]\)]?/g;
+    conditional_regex = /\$(\w+\.?\d*)(=|!=|>|<|<=|>=)(\w+\.?\d*)(\|\||&&)?(\w+\.?\d*)?(=|!=|>|<|<=|>=)?(\w+\.?\d*)?(\|\||&&)?(\w+\.?\d*)?(=|!=|>|<|<=|>=)?(\w+\.?\d*)?\?([^:\r\n]*):([^$\r\n]*)\$/g,
+    math_regex = /[\[\(]?([\d\.]+)([\+\-\*\/\%\^])([\d\.]+)[\]\)]?/g,
+    function_regex = /(\c+)\([\d\.+]\)/g,
+    const_regex = /\((.+)(pi|e)(.+)\)/g,
 
-  FM.prototype.parse = function(input_str) {
-    var fm = this,
-      val = input_str,
-      old_val;
+    stolen_regex = /\$(\w+\.?\d*)(=|!=|>|<|<=|>=)(\w+\.?\d*)(\|\||&&)?(\w+\.?\d*)?(=|!=|>|<|<=|>=)?(\w+\.?\d*)?(\|\||&&)?(\w+\.?\d*)?(=|!=|>|<|<=|>=)?(\w+\.?\d*)?\?([^:\r\n]*):([^$\r\n]*)\$/g;
 
-    //TODO: Do this WAAAAYYYY better. repeating works for now, but its ugly and stupid and hacky
-    val = fm.replace_tags(val);
-    
-    while(old_val !== val) {
-      old_val = val;
-      val = fm.calculate_math(val);
-      val = fm.calculate_conditionals(val);
-    }
-   
-    return val;
+  function conditional(match, cond) {
+    return runstatement(cond);
   };
 
-  FM.prototype.parseInt = function(input_str) {
-    return parseInt(this.parse(input_str));
+  function runstatement(stmt) {
+    try {
+      with(FM.SCOPE) {
+        return eval(stmt);
+      }
+    } catch(e) {
+      return stmt;
+    }
+  };
+
+  FM.prototype.parse = function(instr) {
+    var out = "",
+        paren_depth = 0,
+        cond_depth = 0,
+        statement = '';
+    
+    instr = fm.replace_tags(instr)
+      .replace('[', '(').replace(']', ')')
+      .replace("=", "==")
+      .replace(">==", ">=")
+      .replace("<==", "<=")
+      .replace(/\$(.+)\$/g, conditional);
+
+    for(var i = 0; i < instr.length; i++) {
+      if(instr[i] === '(') {
+        paren_depth++;
+      }
+      
+      if(paren_depth === 0) {
+        out += instr[i];        
+      } else {
+        statement += instr[i];
+      }
+
+      if(instr[i] === ')') {
+        paren_depth--;
+        if(paren_depth === 0) {
+          out += runstatement(statement);
+          statement = '';
+        }
+      } else if(paren_depth < 0) {
+        throw 'Mismatched parentheses';
+      }
+    }
+
+    return out;
   }
 
-  FM.prototype.calculate_math = function(input_str) {
-    /* This needs to handle math in strings, at the moment it will
-     * look for [\d]+[\+\-\*\/][\d]+ (so any numbers, followed by
-     * a mathematical operator, followed by another number) and replace
-     * it with the calculated value
-     */
+  FM.prototype.parseInt = function(instr) { 
+    return parseInt(this.parse(instr));
+  }
 
-    return input_str.replace(math_regex,
-      function(match, val1, op, val2) {
-        val1 = parseFloat(val1);
-        val2 = parseFloat(val2);
+  FM.SCOPE = {
+    pi: Math.PI,
+    e: Math.E,
 
-        switch (op) {
-          case '+':
-            return val1 + val2;
-          case '-':
-            return val1 - val2;
-          case '*':
-            return val1 * val2;
-          case '/':
-            return val1 / val2;
-        };
+    rand: function(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; },
+    abs: Math.abs,
+    
+    cos: Math.cos,
+    sin: Math.sin,
+    tan: Math.tan,
+    
+    acos: Math.acos,
+    asin: Math.asin,
+    atan: Math.atan,
+    
+    cosh: Math.cosh,
+    sinh: Math.sinh,
+    tanh: Math.tanh,
 
-      });
-
-  };
-
-
-  FM.prototype.calculate_conditionals = function(input_str) {
-    return input_str.replace(this.conditional_regex,
-      function(match, left, op, right, trueval, falseval) {
-        left = parseInt(left);
-        right = parseInt(right);
-
-        switch (op) {
-          case '>':
-            return left > right ? trueval : falseval;
-          case '<':
-            return left < right ? trueval : falseval;
-          case '>=':
-            return left >= right ? trueval : falseval;
-          case '<=':
-            return left <= right ? trueval : falseval;
-        }
-      });
-
-  };
+    cbrt: Math.cbrt,
+    ceil: Math.ceil,
+    floor: Math.floor,
+    log: Math.log,
+    log2: Math.log2,
+    log10: Math.log10,
+    sqrt: Math.sqrt,
+    round: Math.round,
+    exp: Math.exp,
+    expm1: Math.expm1,
+    deg: function(rad) { return (rad / 180) * Math.PI; },
+    rad: function(deg) { return (deg / Math.PI) * 180; }
+  }
 
   FM.prototype.replace_tags = function(input_str) {
     return input_str.replace(/#(\w+)#/g, this.tags_replacer.bind(this));

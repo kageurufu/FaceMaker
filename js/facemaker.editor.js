@@ -134,7 +134,6 @@
     r.set("face.images." + hash, image);
   };
 
-
   FM.BLANK_SHAPE = {
     "color": "-1",
     "id": 0,

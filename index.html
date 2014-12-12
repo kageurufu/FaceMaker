@@ -30,6 +30,7 @@
         <div class="navbar-form navbar-right">
           <select id="example_faces" class="form-control">
             <option>Example Faces</option>
+            <option value="Math_Test_Face.face">Math Test Face</option>
             <option value="DaytonaRolex.face">Daytona Rolex</option>
             <option value="DaytonaRolexTinted.face">Daytona Rolex (Beta Tint)</option>
             <option value="angleface.face">Angle Face</option>
@@ -205,7 +206,7 @@
       if(e.target.selectedIndex) {
         fm.load_face_ajax("examples/" + $(this).val());
       }
-    }).val("DaytonaRolexTinted.face").trigger("change");
+    }).val("Math_Test_Face.face").trigger("change");
 
     function load_file_input(e) { 
       var file = e.target.files[0],
@@ -258,6 +259,9 @@
 
       window.drop = e;
     });
+
+    fm.renderer.stop_rendering();
+    fm.magicParse("test $sin(pi*#DWFSS#)>50||sin(pi*#DWFSS#)<60?#DWFSS#+5:2$ value");
   </script>
   <style id="font-config"></style>
 </body>

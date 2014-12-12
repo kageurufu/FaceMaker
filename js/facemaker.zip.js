@@ -16,15 +16,18 @@
     for(var font_filename in fm.face.fonts) {
       if(fm.face.fonts.hasOwnProperty(font_filename)) {
         var font = fm.face.fonts[font_filename];
-
-        fonts_folder.file(font.filename, font.file.asArrayBuffer());
+        if(fm._is_font_used(font.filename)) {
+          fonts_folder.file(font.filename, font.file.asArrayBuffer());
+        }
       }
     }
 
     //Export all the images
     for(var image_hash in fm.face.images) {
       if(fm.face.images.hasOwnProperty(image_hash)) {
-        images_folder.file(image_hash, fm.face.images[image_hash].file.asArrayBuffer());
+        if(fm._is_image_used(image_hash)) {
+          images_folder.file(image_hash, fm.face.images[image_hash].file.asArrayBuffer());
+        }
       }
     }
 
@@ -132,4 +135,27 @@
     fm.reload_editor();
   }
 
+  FM.prototype._is_font_used = function(font) {
+    var fm = this;
+
+    for(var i = 0; i < fm.face.watchface.length; i++) {
+      if(fm.face.watchface[i].type === 'text' && fm.face.watchface[i].font_hash === font) {
+        return true;
+      }
+    }
+
+    return false;
+  };
+
+  FM.prototype._is_image_used = function(image) {
+    var fm = this;
+
+    for(var i = 0; i < fm.face.watchface.length; i++) {
+      if(fm.face.watchface[i].type === 'image' && fm.face.watchface[i].hash === image) {
+        return true;
+      }
+    }
+
+    return false;
+  }
 })(FaceMaker);

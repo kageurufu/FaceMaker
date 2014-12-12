@@ -141,6 +141,7 @@
         image_hash = layer.hash,
         image = fm.face.images[image_hash].img,
 
+        opacity = fm.parseInt(layer.opacity),
         x = fm.parseInt(layer.x),
         y = fm.parseInt(layer.y),
         ox = 0,
@@ -189,7 +190,8 @@
     c.save()
     c.translate(x, y);
     c.rotate(rotation * Math.PI / 180);
-
+    c.globalAlpha = opacity / 100;
+    
     c.drawImage(image, ox, oy, width, height);
 
     c.restore();
